@@ -121,14 +121,15 @@ export class UserActions {
   async request({ url, method, query, send, expect }: RequestI) {
     if (expect) {
       return await request(this.app)
-      [method](url)
+        [method](url)
         .set({ Authorization: 'Bearer ' + this._accessToken })
         .query(query)
         .send(send)
         .expect(expect);
     }
 
-    return await request(this.app)[method](url)
+    return await request(this.app)
+      [method](url)
       .set({ Authorization: 'Bearer ' + this._accessToken })
       .query(query)
       .send(send);

@@ -66,7 +66,7 @@ const getBooleanVariable = (name: string, required = true) => {
  */
 export function SetEnvAsString(
   name: string,
-  required = false,
+  required = true,
 ): PropertyDecorator {
   return (target: Record<string, any>, key: string | symbol) => {
     target[key as string] = getStringVariable(name, required);
@@ -81,7 +81,7 @@ export function SetEnvAsString(
  */
 export function SetEnvAsNumber(
   name: string,
-  required = false,
+  required = true,
 ): PropertyDecorator {
   return (target: Record<string, any>, key: string | symbol) => {
     target[key as string] = getNumberVariable(name, required);
@@ -96,7 +96,7 @@ export function SetEnvAsNumber(
  */
 export function SetEnvAsBoolean(
   name: string,
-  required = false,
+  required = true,
 ): PropertyDecorator {
   return (target: Record<string, any>, key: string | symbol) => {
     target[key as string] = getStringVariable(name, required);

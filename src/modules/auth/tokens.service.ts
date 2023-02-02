@@ -29,7 +29,7 @@ export class TokensService {
   @SetEnvAsString('JWT_REFRESH_EXPIRES_IN')
   private readonly refreshTokenExpiresIn: string;
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) { }
 
   async generateAccessToken(payload: JwtPayload) {
     return this.jwtService.sign(payload, {

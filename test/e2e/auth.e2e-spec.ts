@@ -1,16 +1,16 @@
-// Setup env variables before import other modules
 import * as dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { Application } from 'express';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
+import type { Application } from 'express';
+import * as request from 'supertest';
 
 import { AppModule } from '@Src/app.module';
-import { UserActions } from '@Test/utils/user-actions';
+import { clearDatabase } from '@Test/clear-database';
 import getCookies from '@Test/utils/get-cookies';
+import { sleep } from '@Test/utils/sleep';
 
 describe('AppController (e2e)', () => {
   let app: Application;
@@ -25,13 +25,17 @@ describe('AppController (e2e)', () => {
     application = await module
       .createNestApplication()
       .use(cookieParser())
+      .useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
       .init();
 
     app = application.getHttpServer();
+
+    await clearDatabase();
   });
 
   afterAll(async () => {
     await application.close();
+    await clearDatabase();
   });
 
   describe('Entire auth logic cycle', () => {
@@ -44,47 +48,53 @@ describe('AppController (e2e)', () => {
     };
 
     it('register user', async () => {
-      await request(app)
-        .post('/auth/register')
-        .send(user)
-        .expect(201);
+      expect(await prisma.user.count()).toBe(0);
+      await request(app).post('/auth/register').send(user).expect(201);
 
-      // TODO Check if created new user in database
+      expect(await prisma.user.count()).toBe(1);
+
+      const userFromDb = await prisma.user.findFirst({ where: { email: user.email } });
+
+      expect(userFromDb.username).toBe(user.username);
     });
 
     it('log-in user', async () => {
-      const { body } = await request(app)
-        .post('/auth/login')
-        .send(user)
-        .expect(200);
+      expect(await prisma.session.count()).toBe(0);
 
-      const cookies = getCookies(body);
+      const r = await request(app).get('/auth/login').send(user).expect(200);
 
-      expect(cookies.accessToken).toBeDefined();
-      expect(cookies.refreshToken).toBeDefined();
+      const cookies = getCookies(r);
+
+      expect(r.body.accessToken).toBeDefined();
+      expect(cookies.refreshToken.value).toBeDefined();
+
+      const sessions = await prisma.session.findMany();
+
+      expect(sessions).toHaveLength(1);
+
+      expect(sessions[0].refreshToken).not.toBe(user.refreshToken);
 
       user.refreshToken = cookies.refreshToken.value;
-      user.accessToken = body.accessToken;
-
-      // TODO check if refresh token from cookies is equal to refresh token in database
+      user.accessToken = r.body.accessToken;
     });
 
     it('refresh token', async () => {
-      const { body } = await request(app)
+      await sleep(1000);
+      const r = await request(app)
         .get('/auth/refresh')
-        .set({ Authorization: 'Bearer ' + user.accessToken })
-        .expect(200)
+        .set('Cookie', [`refreshToken=${user.refreshToken}`])
+        .expect(200);
 
-      const cookies = getCookies(body);
+      const cookies = getCookies(r);
 
-      expect(cookies.accessToken).toBeDefined();
-      expect(cookies.refreshToken).toBeDefined();
+      expect(r.body.accessToken).toBeDefined();
+      expect(cookies.refreshToken.value).toBeDefined();
 
       expect(cookies.refreshToken.value).not.toBe(user.refreshToken);
 
-      // TODO check if refresh token in database has been changes to the new
+      user.refreshToken = cookies.refreshToken.value;
 
-      user.refreshToken = cookies.refreshToken.value
+      expect((await prisma.session.findMany())[0].refreshToken).toBe(cookies.refreshToken.value);
     });
 
     it('log-out user', async () => {
@@ -93,7 +103,7 @@ describe('AppController (e2e)', () => {
         .set({ Authorization: 'Bearer ' + user.accessToken })
         .expect(200);
 
-      // TODO check if refresh token has been deleted
+      expect(await prisma.session.count()).toBe(0);
     });
   });
 });

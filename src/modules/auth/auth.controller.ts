@@ -1,50 +1,63 @@
-import { ZodValidationPipe } from '@anatine/zod-nestjs';
-import { JwtTokensPair } from '@Module/auth/tokens.service';
 import {
   Body,
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
-  Res,
-  UsePipes,
+  Res
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
+import { AuthService } from '@Module/auth/auth.service';
+import { JwtTokensPair } from '@Module/auth/tokens.service';
 import {
   ChangePasswordDto,
   LogInDto,
   RegisterDto,
   UpdateSessionDto,
 } from '@Src/modules/auth/dto/auth.dto';
+import { DeviceName } from '@Src/utils/device-name.decorator';
 import { GetCookies } from '@Src/utils/get-cookies.decorator';
-import { Response } from 'express';
 
 @ApiTags('Authentication / authorization')
-@UsePipes(ZodValidationPipe)
 @Controller('auth')
 export class AuthController {
-  constructor() { }
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
-  async register(@Res() res: Response, @Body() body: RegisterDto) {
-    res.send({ status: 'ok' });
+  async register(@Body() body: RegisterDto) {
+    return this.authService.register(body);
   }
 
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  async logIn(@Body() body: LogInDto) { }
+  @Get('login')
+  async logIn(
+    @Res() res: Response,
+    @Body() body: LogInDto,
+    @DeviceName() deviceName: string,
+  ) {
+    const tokens = await this.authService.logIn(body, deviceName);
+
+    this.setCookies(res, tokens);
+  }
 
   @Get('logout')
-  async logOut(@GetCookies('refreshToken') refreshToken: string) { }
+  async logOut(@GetCookies('refreshToken') refreshToken: string) {
+    await this.authService.logOut(refreshToken);
+  }
 
   @Get('refresh')
-  async refresh(@GetCookies('refreshToken') refreshToken: string) { }
+  async refresh(
+    @Res() res: Response,
+    @GetCookies('refreshToken') refreshToken: string,
+  ) {
+    const tokens = await this.authService.refresh(refreshToken);
+
+    this.setCookies(res, tokens);
+  }
 
   @Delete('session/:id')
   async deleteSession(@Param('id', ParseUUIDPipe) id: string) { }
@@ -61,7 +74,7 @@ export class AuthController {
   private async setCookies(
     res: Response,
     { accessToken, refreshToken }: JwtTokensPair,
-    responseCode = 201,
+    responseCode = 200,
   ) {
     res.cookie('refreshToken', refreshToken, {
       maxAge: 30 * 24 * 60 * 1000,

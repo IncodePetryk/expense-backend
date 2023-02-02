@@ -5,7 +5,7 @@ Read the requirements for the project [here](./Requirements.md)
 ## Tech stack
 
 - Nest.js
-- TypeORM
+- Prisma
 
 ## Development steps
 
@@ -16,7 +16,7 @@ Read the requirements for the project [here](./Requirements.md)
   - [x] Session
   - [x] ExpenseCategory
   - [x] Transaction
-- [x] setup TypeORM
+- [x] setup Prisma
 - [x] add Postgres in Docker
 - [x] setup Swagger
 - [ ] create `Auth` modules

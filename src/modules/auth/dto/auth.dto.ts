@@ -1,52 +1,33 @@
-import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi } from '@anatine/zod-openapi';
-import { z } from 'zod';
+import { IsEmail, IsString } from 'class-validator';
 
-export const RegisterZ = extendApi(
-  z.object({
-    username: z.string(),
-    email: z.string(),
-    password: z.string(),
-  }),
-  {
-    title: 'Register user',
-  },
-);
+export class RegisterDto {
+  @IsString()
+  readonly username: string;
 
-export class RegisterDto extends createZodDto(RegisterZ) {}
+  @IsEmail()
+  readonly email: string;
 
-export const LogInZ = extendApi(
-  z.object({
-    email: z.string(),
-    password: z.string(),
-  }),
-  {
-    title: 'Log-in user',
-  },
-);
+  @IsString()
+  readonly password: string;
+}
 
-export class LogInDto extends createZodDto(LogInZ) {}
+export class LogInDto {
+  @IsString()
+  readonly email: string;
 
-export const UpdateSessionZ = extendApi(
-  z.object({
-    deviceName: z.string(),
-  }),
-  {
-    title: 'Update session',
-    description: 'Update session device name',
-  },
-);
+  @IsString()
+  readonly password: string;
+}
 
-export class UpdateSessionDto extends createZodDto(UpdateSessionZ) {}
+export class UpdateSessionDto {
+  @IsString()
+  readonly deviceName: string;
+}
 
-export const ChangePasswordZ = extendApi(
-  z.object({
-    oldPassword: z.string(),
-    newPassword: z.string(),
-  }),
-  {
-    title: 'Change password',
-  },
-);
+export class ChangePasswordDto {
+  @IsString()
+  readonly oldPassword: string;
 
-export class ChangePasswordDto extends createZodDto(ChangePasswordZ) {}
+  @IsString()
+  readonly newPassword: string;
+}
