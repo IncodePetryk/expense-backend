@@ -16,9 +16,9 @@ Read the requirements for the project [here](./Requirements.md)
   - [x] Session
   - [x] ExpenseCategory
   - [x] Transaction
-- [ ] setup TypeORM
-- [ ] add Postgres in Docker
-- [ ] setup Swagger
+- [x] setup TypeORM
+- [x] add Postgres in Docker
+- [x] setup Swagger
 - [ ] create `Auth` modules
   - [ ] endpoints
     - [ ] POST register
