@@ -2,21 +2,21 @@ import { Controller } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
-  constructor() { }
+  constructor() {}
 
-  async register() { }
+  async register() {}
 
-  async logIn() { }
+  async logIn() {}
 
-  async logOut() { }
+  async logOut() {}
 
-  async refresh() { }
+  async refresh() {}
 
-  async deleteSession() { }
+  async deleteSession() {}
 
-  async deleteAllSessions() { }
+  async deleteAllSessions() {}
 
-  async updateSession() { }
+  async updateSession() {}
 
-  async changePassword() { }
+  async changePassword() {}
 }

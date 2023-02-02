@@ -9,4 +9,4 @@ import { AuthService } from 'src/modules/auth/auth.service';
   imports: [],
   exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

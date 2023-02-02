@@ -11,4 +11,4 @@ import { UserService } from 'src/modules/user/user.service';
   ],
   exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

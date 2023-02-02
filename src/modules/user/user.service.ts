@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
-  constructor() { }
+  constructor() {}
 
   // @InjectRepository()
   // private usersRepository: Repository<>,
 
-  async create() { }
+  async create() {}
 
-  async findFirst() { }
+  async findFirst() {}
 
-  async findMany() { }
+  async findMany() {}
 
-  async getExists() { }
+  async getExists() {}
 }
