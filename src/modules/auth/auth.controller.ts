@@ -1,22 +1,75 @@
-import { Controller } from '@nestjs/common';
+import { ZodValidationPipe } from '@anatine/zod-nestjs';
+import { JwtTokensPair } from '@Module/auth/tokens.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+import {
+  ChangePasswordDto,
+  LogInDto,
+  RegisterDto,
+  UpdateSessionDto,
+} from '@Src/modules/auth/dto/auth.dto';
+import { GetCookies } from '@Src/utils/get-cookies.decorator';
+import { Response } from 'express';
+
+@ApiTags('Authentication / authorization')
+@UsePipes(ZodValidationPipe)
 @Controller('auth')
 export class AuthController {
-  constructor() {}
+  constructor() { }
 
-  async register() {}
+  @Post('register')
+  async register(@Res() res: Response, @Body() body: RegisterDto) {
+    res.send({ status: 'ok' });
+  }
 
-  async logIn() {}
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  async logIn(@Body() body: LogInDto) { }
 
-  async logOut() {}
+  @Get('logout')
+  async logOut(@GetCookies('refreshToken') refreshToken: string) { }
 
-  async refresh() {}
+  @Get('refresh')
+  async refresh(@GetCookies('refreshToken') refreshToken: string) { }
 
-  async deleteSession() {}
+  @Delete('session/:id')
+  async deleteSession(@Param('id', ParseUUIDPipe) id: string) { }
 
-  async deleteAllSessions() {}
+  @Patch('sessions/:id')
+  async updateSession(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateSessionDto,
+  ) { }
 
-  async updateSession() {}
+  @Post('change-password')
+  async changePassword(@Body() body: ChangePasswordDto) { }
 
-  async changePassword() {}
+  private async setCookies(
+    res: Response,
+    { accessToken, refreshToken }: JwtTokensPair,
+    responseCode = 201,
+  ) {
+    res.cookie('refreshToken', refreshToken, {
+      maxAge: 30 * 24 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+    });
+
+    res.send({ accessToken }).status(responseCode);
+  }
 }

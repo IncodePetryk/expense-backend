@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { SetEnvAsString } from 'src/utils/env-variable.util';
+import { SetEnvAsString } from '@Src/utils/env-variable.util';
 
 export interface JwtPayload {
   id: string;
 }
 
-export interface JwtTokenPair {
+export interface JwtTokensPair {
   accessToken: string;
   refreshToken: string;
 }
@@ -29,7 +29,7 @@ export class TokensService {
   @SetEnvAsString('JWT_REFRESH_EXPIRES_IN')
   private readonly refreshTokenExpiresIn: string;
 
-  constructor(private readonly jwtService: JwtService) { }
+  constructor(private readonly jwtService: JwtService) {}
 
   async generateAccessToken(payload: JwtPayload) {
     return this.jwtService.sign(payload, {

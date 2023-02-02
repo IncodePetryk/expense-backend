@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { getEnv } from 'src/utils/env-variable.util';
+import { AuthModule } from '@Src/modules/auth/auth.module';
+import { getEnv } from '@Src/utils/env-variable.util';
 
 @Module({
   controllers: [],
@@ -17,6 +18,7 @@ import { getEnv } from 'src/utils/env-variable.util';
       entities: [],
       synchronize: process.env.ENV !== 'prod' ? true : false,
     }),
+    AuthModule,
   ],
 })
 export class AppModule {}

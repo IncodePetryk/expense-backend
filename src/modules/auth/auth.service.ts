@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import * as bcryptjs from 'bcryptjs';
 
-import { SetEnvAsNumber } from 'src/utils/env-variable.util';
+import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
 
 @Injectable()
 export class AuthService {
   @SetEnvAsNumber('PASSWORD_SALT')
   private readonly passwordSalt: number;
 
-  constructor() { }
+  constructor() {}
 
-  async register() { }
+  async register() {}
 
-  async logIn() { }
+  async logIn() {}
 
-  async logOut() { }
+  async logOut() {}
 
-  async refresh() { }
+  async refresh() {}
 
-  async deleteSession() { }
+  async deleteSession() {}
 
-  async deleteAllSessions() { }
+  async deleteAllSessions() {}
 
-  async updateSession() { }
+  async updateSession() {}
 
-  async changePassword() { }
+  async changePassword() {}
 }
