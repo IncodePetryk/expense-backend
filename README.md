@@ -20,14 +20,15 @@ Read the requirements for the project [here](./Requirements.md)
 - [x] add Postgres in Docker
 - [x] setup Swagger
 - [ ] create `Auth` modules
-  - [ ] endpoints
-    - [ ] POST register
-    - [ ] POST login
-    - [ ] GET logout
-    - [ ] GET refresh
-    - [ ] DELETE delete session
-    - [ ] POST update session
-    - [ ] POST change password
+  - [x] endpoints
+    - [x] POST register
+    - [x] POST login
+    - [x] GET logout
+    - [x] GET refresh
+    - [x] GET sessions
+    - [x] DELETE delete session
+    - [x] POST update session
+    - [x] POST change password
   - [ ] write Swagger docs
   - [ ] write e2e tests
 - [ ] create `Expense` module

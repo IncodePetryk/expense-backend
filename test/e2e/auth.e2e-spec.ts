@@ -3,6 +3,7 @@ dotenv.config({ path: './.env' });
 
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import Prisma from '@prisma/client';
 import * as cookieParser from 'cookie-parser';
 import type { Application } from 'express';
 import * as request from 'supertest';
@@ -47,13 +48,17 @@ describe('AppController (e2e)', () => {
       refreshToken: '',
     };
 
+    let userFromDb: Prisma.User;
+
     it('register user', async () => {
       expect(await prisma.user.count()).toBe(0);
       await request(app).post('/auth/register').send(user).expect(201);
 
       expect(await prisma.user.count()).toBe(1);
 
-      const userFromDb = await prisma.user.findFirst({ where: { email: user.email } });
+      userFromDb = await prisma.user.findFirst({
+        where: { email: user.email },
+      });
 
       expect(userFromDb.username).toBe(user.username);
     });
@@ -94,7 +99,9 @@ describe('AppController (e2e)', () => {
 
       user.refreshToken = cookies.refreshToken.value;
 
-      expect((await prisma.session.findMany())[0].refreshToken).toBe(cookies.refreshToken.value);
+      expect((await prisma.session.findMany())[0].refreshToken).toBe(
+        cookies.refreshToken.value,
+      );
     });
 
     it('log-out user', async () => {
@@ -104,6 +111,104 @@ describe('AppController (e2e)', () => {
         .expect(200);
 
       expect(await prisma.session.count()).toBe(0);
+    });
+
+    it('get sessions', async () => {
+      const r = await request(app).get('/auth/login').send(user).expect(200);
+      const cookies = getCookies(r);
+      user.refreshToken = cookies.refreshToken.value;
+      user.accessToken = r.body.accessToken;
+
+      const { body } = await request(app)
+        .get('/auth/session')
+        .set({ Authorization: 'Bearer ' + user.accessToken })
+        .expect(200);
+
+      expect(body).toHaveLength(1);
+    });
+
+    it('delete session', async () => {
+      const { body: sessions } = await request(app)
+        .get('/auth/session')
+        .set({ Authorization: 'Bearer ' + user.accessToken })
+        .expect(200);
+
+      await request(app)
+        .delete('/auth/session/' + sessions[0].id)
+        .set({ Authorization: 'Bearer ' + user.accessToken })
+        .expect(200);
+
+      expect(await prisma.session.findMany()).toHaveLength(sessions.length - 1);
+    });
+
+    it('rename session', async () => {
+      const r = await request(app).get('/auth/login').send(user).expect(200);
+      const cookies = getCookies(r);
+      user.refreshToken = cookies.refreshToken.value;
+      user.accessToken = r.body.accessToken;
+
+      const { body: sessions } = await request(app)
+        .get('/auth/session')
+        .set({ Authorization: 'Bearer ' + user.accessToken })
+        .expect(200);
+
+      const { body: updatedSession } = await request(app)
+        .patch('/auth/session/' + sessions[0].id)
+        .set({ Authorization: 'Bearer ' + user.accessToken })
+        .send({
+          deviceName: 'MacBook Pro',
+        })
+        .expect(200);
+
+      const sessionFromDb = await prisma.session.findFirst({
+        where: {
+          id: sessions[0].id,
+        },
+      });
+
+      expect(sessionFromDb.deviceName).toBe('MacBook Pro');
+      expect(updatedSession.deviceName).toBe('MacBook Pro');
+    });
+
+    it('change user password', async () => {
+      // Create other session to check if they will be deleted after password change
+      await request(app).get('/auth/login').send(user).expect(200);
+      await request(app).get('/auth/login').send(user).expect(200);
+      await request(app).get('/auth/login').send(user).expect(200);
+      await request(app).get('/auth/login').send(user).expect(200);
+
+      const sessions = await prisma.session.findMany({
+        where: {
+          userId: userFromDb.id,
+        },
+      });
+
+      expect(sessions).toHaveLength(5);
+
+      await request(app)
+        .patch('/auth/change-password')
+        .set({ Authorization: 'Bearer ' + user.accessToken })
+        .send({
+          oldPassword: user.password,
+          newPassword: 'main123123',
+        })
+        .expect(200);
+
+      user.password = 'main123123';
+
+      const sessionsAfter = await prisma.session.findMany();
+
+      expect(sessionsAfter).toHaveLength(0);
+
+      const userWithNewPassword = await prisma.user.findFirst({
+        where: {
+          email: user.email,
+        },
+      });
+
+      expect(userWithNewPassword.password).not.toBe(userFromDb.password);
+
+      userFromDb = userWithNewPassword;
     });
   });
 });

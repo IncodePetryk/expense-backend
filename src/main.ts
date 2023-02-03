@@ -14,10 +14,12 @@ async function bootstrap() {
   const PORT = getEnv.number('PORT');
 
   // Setup middleware
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
   app.enableCors();
   app.use(cookieParser());
 

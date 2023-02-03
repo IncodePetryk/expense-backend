@@ -5,8 +5,7 @@ import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class SessionService {
-
-  constructor() { }
+  constructor() {}
 
   async create(data: Prisma.Prisma.SessionCreateArgs) {
     return prisma.session.create(data);
@@ -14,6 +13,10 @@ export class SessionService {
 
   async delete(data: Prisma.Prisma.SessionDeleteArgs) {
     return prisma.session.delete(data);
+  }
+
+  async deleteMany(data: Prisma.Prisma.SessionDeleteManyArgs) {
+    return prisma.session.deleteMany(data);
   }
 
   async findMany(data: Prisma.Prisma.SessionFindManyArgs) {
@@ -24,7 +27,10 @@ export class SessionService {
     return prisma.session.findFirst(data);
   }
 
-  async getExists(data: Prisma.Prisma.SessionFindFirstArgs, callback?: () => never) {
+  async getExisting(
+    data: Prisma.Prisma.SessionFindFirstArgs,
+    callback?: () => never,
+  ) {
     const sessionCandidate = await this.findFirst(data);
 
     if (!sessionCandidate) {
@@ -36,6 +42,25 @@ export class SessionService {
     }
 
     return sessionCandidate;
+  }
+
+  async updateExisting(
+    data: Prisma.Prisma.SessionUpdateArgs,
+    callback?: () => never,
+  ) {
+    const sessionCandidate = await this.findFirst({
+      where: data.where,
+    });
+
+    if (!sessionCandidate) {
+      if (callback) {
+        callback();
+      }
+
+      throw new BadRequestException('Session not exists');
+    }
+
+    return this.update(data);
   }
 
   async update(data: Prisma.Prisma.SessionUpdateArgs) {

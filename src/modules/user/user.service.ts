@@ -5,7 +5,7 @@ import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class UserService {
-  constructor() { }
+  constructor() {}
 
   async create(data: Prisma.Prisma.UserCreateArgs) {
     return prisma.user.create(data);
@@ -19,7 +19,10 @@ export class UserService {
     return prisma.user.findMany(data);
   }
 
-  async getExists(data: Prisma.Prisma.UserFindFirstArgs, callback?: () => never) {
+  async getExists(
+    data: Prisma.Prisma.UserFindFirstArgs,
+    callback?: () => never,
+  ) {
     const userCandidate = await this.findFirst(data);
 
     if (!userCandidate) {
@@ -31,5 +34,9 @@ export class UserService {
     }
 
     return userCandidate;
+  }
+
+  async update(data: Prisma.Prisma.UserUpdateArgs) {
+    return prisma.user.update(data);
   }
 }

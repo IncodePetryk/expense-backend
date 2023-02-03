@@ -1,11 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import Prisma from '@prisma/client';
 import * as bcryptjs from 'bcryptjs';
 
-import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
-import { LogInDto, RegisterDto } from '@Module/auth/dto/auth.dto';
-import { UserService } from '@Module/user/user.service';
-import { TokensService } from '@Module/auth/tokens.service';
+import {
+  ChangePasswordDto,
+  RegisterDto,
+  UpdateSessionDto,
+} from '@Module/auth/dto/auth.dto';
 import { SessionService } from '@Module/auth/session.service';
+import { TokensService } from '@Module/auth/tokens.service';
+import { UserService } from '@Module/user/user.service';
+import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
 
 @Injectable()
 export class AuthService {
@@ -47,21 +52,13 @@ export class AuthService {
       data: {
         ...data,
         password: passwordHash,
-      }
+      },
     });
 
     // TODO create list of basic expense categories
   }
 
-  async logIn(data: LogInDto, deviceName: string) {
-    const user = await this.userService.getExists({
-      where: { email: data.email },
-    });
-
-    if (!bcryptjs.compareSync(data.password, user.password)) {
-      throw new BadRequestException('Bad password');
-    }
-
+  async logIn(user: Prisma.User, deviceName: string) {
     const tokens = await this.tokensService.generatePairTokens({ id: user.id });
 
     await this.sessionService.create({
@@ -69,14 +66,14 @@ export class AuthService {
         userId: user.id,
         deviceName,
         refreshToken: tokens.refreshToken,
-      }
+      },
     });
 
     return tokens;
   }
 
   async logOut(refreshToken: string) {
-    const candidate = await this.sessionService.getExists({
+    const candidate = await this.sessionService.getExisting({
       where: {
         refreshToken,
       },
@@ -86,7 +83,7 @@ export class AuthService {
       where: {
         id: candidate.id,
       },
-    })
+    });
   }
 
   async refresh(refreshToken: string) {
@@ -112,7 +109,7 @@ export class AuthService {
 
     await this.sessionService.update({
       where: {
-        id: tokenCandidate.id
+        id: tokenCandidate.id,
       },
       data: {
         refreshToken: tokens.refreshToken,
@@ -122,9 +119,102 @@ export class AuthService {
     return tokens;
   }
 
-  async deleteSession() { }
+  async getSessions(userId: string) {
+    return this.sessionService.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        deviceName: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
 
-  async updateSession() { }
+  async deleteSessionById(userId: string, sessionId: string) {
+    const candidate = await this.sessionService.getExisting({
+      where: {
+        id: sessionId,
+        userId,
+      },
+    });
 
-  async changePassword() { }
+    if (candidate.userId !== userId) {
+      throw new BadRequestException('This session not belongs to you');
+    }
+
+    await this.sessionService.delete({
+      where: {
+        id: sessionId,
+      },
+    });
+  }
+
+  async updateSession(sessionId: string, data: UpdateSessionDto) {
+    return this.sessionService.updateExisting({
+      where: {
+        id: sessionId,
+      },
+      select: {
+        id: true,
+        deviceName: true,
+        updatedAt: true,
+        createdAt: true,
+      },
+      data,
+    });
+  }
+
+  async changePassword(userId: string, data: ChangePasswordDto) {
+    // Change password logic
+    const userCandidate = await this.userService.getExists({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!bcryptjs.compareSync(data.oldPassword, userCandidate.password)) {
+      throw new BadRequestException('Bad old password');
+    }
+
+    const newPasswordHash = bcryptjs.hashSync(
+      data.newPassword,
+      this.passwordSalt,
+    );
+
+    await this.userService.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: newPasswordHash,
+      },
+    });
+
+    // Cancel all sessions
+    await this.sessionService.deleteMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async validateUser(
+    email: string,
+    pass: string,
+  ): Promise<Omit<Prisma.User, 'password'>> {
+    const user = await this.userService.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (user && bcryptjs.compareSync(pass, user.password)) {
+      return user;
+    }
+
+    return null;
+  }
 }
