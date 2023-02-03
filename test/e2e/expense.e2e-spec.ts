@@ -6,6 +6,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import Prisma from '@prisma/client';
 import * as cookieParser from 'cookie-parser';
 import type { Application } from 'express';
+import * as request from 'supertest';
 
 import { AppModule } from '@Src/app.module';
 import { createAdmin } from '@Src/utils/admin.util';
@@ -134,9 +135,15 @@ describe('AppController (e2e)', () => {
     let admin: UserActions;
     let baseExpenseCategory: Prisma.BaseExpenseCategory;
 
-    // it('fetch base expense categories', async () => {
-    //   const { body }
-    // });
+    it('fetch base expense categories', async () => {
+      const { body } = await user.request({
+        url: '/expense/base-category',
+        method: 'get',
+        expect: 200,
+      });
+
+      expect(body).toHaveLength(7);
+    });
 
     it('create new base expense category', async () => {
       admin = new UserActions(app, {
