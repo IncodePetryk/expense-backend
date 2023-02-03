@@ -9,10 +9,9 @@ import type { Application } from 'express';
 import * as request from 'supertest';
 
 import { AppModule } from '@Src/app.module';
-import { clearDatabase } from '@Test/clear-database';
+import { clearDatabase } from '@Test/utils/clear-database';
 import getCookies from '@Test/utils/get-cookies';
 import { sleep } from '@Test/utils/sleep';
-import { UserActions } from '@Test/utils/user-actions';
 
 describe('AppController (e2e)', () => {
   let app: Application;
