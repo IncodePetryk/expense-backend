@@ -12,6 +12,7 @@ import { AppModule } from '@Src/app.module';
 import { clearDatabase } from '@Test/utils/clear-database';
 import getCookies from '@Test/utils/get-cookies';
 import { sleep } from '@Test/utils/sleep';
+import { createBaseExpenseCategories } from '@Src/utils/base-expense-categories.util';
 
 describe('AppController (e2e)', () => {
   let app: Application;
@@ -32,6 +33,8 @@ describe('AppController (e2e)', () => {
     app = application.getHttpServer();
 
     await clearDatabase();
+
+    await createBaseExpenseCategories();
   });
 
   afterAll(async () => {
@@ -249,12 +252,10 @@ describe('AppController (e2e)', () => {
         })
         .expect(201);
 
-      const { body } = await request(app)
-        .get('/auth/login')
-        .send({
-          email: 'some3@email.com',
-          password: 'some-one',
-        })
+      await request(app).get('/auth/login').send({
+        email: 'some3@email.com',
+        password: 'some-one',
+      });
     });
   });
 });

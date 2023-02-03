@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import Prisma from '@prisma/client';
 import * as bcryptjs from 'bcryptjs';
 
 import {
@@ -12,7 +11,8 @@ import { SessionService } from '@Module/auth/session.service';
 import { TokensService } from '@Module/auth/tokens.service';
 import { UserService } from '@Module/user/user.service';
 import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
-import { useContainer } from 'class-validator';
+import { ExpenseService } from '@Module/expense/expense.service';
+import { ExpenseCategoryService } from '@Module/expense/expense-category.service';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,9 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly tokensService: TokensService,
     private readonly sessionService: SessionService,
-  ) { }
+    private readonly expenseService: ExpenseService,
+    private readonly expenseCategoryService: ExpenseCategoryService,
+  ) {}
 
   async register(data: RegisterDto) {
     const checkEmailExists = await this.userService.findFirst({
@@ -50,14 +52,14 @@ export class AuthService {
 
     const passwordHash = bcryptjs.hashSync(data.password, this.passwordSalt);
 
-    await this.userService.create({
+    const newUser = await this.userService.create({
       data: {
         ...data,
         password: passwordHash,
       },
     });
 
-    // TODO create list of basic expense categories
+    await this.expenseCategoryService.generateBaseCategoriesForUser(newUser.id);
   }
 
   async logIn(data: LogInDto, deviceName: string) {
@@ -65,13 +67,15 @@ export class AuthService {
       where: {
         email: data.email,
       },
-    })
+    });
 
     if (!bcryptjs.compareSync(data.password, userCandidate.password)) {
       throw new BadRequestException('Bad password');
     }
 
-    const tokens = await this.tokensService.generatePairTokens({ id: userCandidate.id });
+    const tokens = await this.tokensService.generatePairTokens({
+      id: userCandidate.id,
+    });
 
     await this.sessionService.create({
       data: {

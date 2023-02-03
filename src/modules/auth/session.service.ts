@@ -5,7 +5,7 @@ import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class SessionService {
-  constructor() { }
+  constructor() {}
 
   async create(data: Prisma.Prisma.SessionCreateArgs) {
     return await prisma.session.create(data);

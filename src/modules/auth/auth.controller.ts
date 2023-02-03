@@ -11,14 +11,17 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBasicAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AuthService } from '@Module/auth/auth.service';
-import {
-  JwtProtectedRequest,
-  LocalProtectedRequest,
-} from '@Module/auth/interfaces/protected-request.interface';
+import { JwtProtectedRequest } from '@Module/auth/interfaces/protected-request.interface';
 import { JwtAuthGuard } from '@Module/auth/jwt-auth.guard';
 import { JwtTokensPair } from '@Module/auth/tokens.service';
 import {
@@ -35,7 +38,7 @@ import { GetCookies } from '@Src/utils/get-cookies.decorator';
 @ApiTags('Authentication / authorization')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ description: 'Register new user' })
   @Post('register')
@@ -89,7 +92,11 @@ export class AuthController {
   }
 
   @ApiOperation({ description: 'Delete session with specified ID' })
-  @ApiParam({ name: 'id', type: 'string', example: '0f34aaaa-8194-4c90-902c-1155163c9911' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    example: '0f34aaaa-8194-4c90-902c-1155163c9911',
+  })
   @ApiBasicAuth('Bearer')
   @UseGuards(JwtAuthGuard)
   @Delete('session/:id')
@@ -101,7 +108,11 @@ export class AuthController {
   }
 
   @ApiOperation({ description: 'Update session name' })
-  @ApiParam({ name: 'id', type: 'string', example: '0f34aaaa-8194-4c90-902c-1155163cac76' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    example: '0f34aaaa-8194-4c90-902c-1155163cac76',
+  })
   @ApiResponse({ type: SessionsDto })
   @ApiBasicAuth('Bearer')
   @UseGuards(JwtAuthGuard)
