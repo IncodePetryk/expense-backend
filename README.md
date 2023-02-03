@@ -29,7 +29,7 @@ Read the requirements for the project [here](./Requirements.md)
     - [x] DELETE delete session
     - [x] POST update session
     - [x] POST change password
-  - [ ] write Swagger docs
+  - [x] write Swagger docs
   - [ ] write e2e tests
 - [ ] create `Expense` module
   - [ ] endpoints
