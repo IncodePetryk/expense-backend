@@ -75,6 +75,8 @@ export class UserActions {
 
     this._accessToken = signIn.body.accessToken;
     this._refreshToken = cookies.refreshToken.value;
+
+    this._user = await this.getUser();
   }
 
   async logIn(expect = 200) {
@@ -91,6 +93,19 @@ export class UserActions {
 
     this._accessToken = signIn.body.accessToken;
     this._refreshToken = cookies.refreshToken.value;
+
+    this._user = await this.getUser();
+  }
+
+  async getUser() {
+    const response = await request(this.app)
+      .get('/user')
+      .set({ Authorization: 'Bearer ' + this._accessToken })
+      .expect(200);
+
+    this._user = response.body;
+
+    return response;
   }
 
   /**
@@ -102,7 +117,7 @@ export class UserActions {
   async request({ url, method, query, send, expect }: RequestI) {
     if (expect) {
       return await request(this.app)
-        [method](url)
+      [method](url)
         .set({ Authorization: 'Bearer ' + this._accessToken })
         .query(query)
         .send(send)
@@ -110,7 +125,7 @@ export class UserActions {
     }
 
     return await request(this.app)
-      [method](url)
+    [method](url)
       .set({ Authorization: 'Bearer ' + this._accessToken })
       .query(query)
       .send(send);
