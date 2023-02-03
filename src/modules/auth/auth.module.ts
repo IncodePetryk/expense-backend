@@ -22,4 +22,4 @@ import { ExpenseModule } from '@Module/expense/expense.module';
   imports: [UserModule, PassportModule, forwardRef(() => ExpenseModule)],
   exports: [JwtStrategy, AuthService, SessionService, TokensService],
 })
-export class AuthModule { }
+export class AuthModule {}

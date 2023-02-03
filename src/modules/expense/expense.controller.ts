@@ -16,28 +16,60 @@ import {
   CreateTransactionDto,
   CreateExpenseCategoryDto,
   UpdateExpenseCategoryDto,
+  UpdateTransactionDto,
 } from '@Module/expense/dto/expense-category.dto';
 import { ExpenseService } from '@Module/expense/expense.service';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller('expense')
 export class ExpenseController {
-  constructor(private readonly expenseService: ExpenseService) {}
+  constructor(private readonly expenseService: ExpenseService) { }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Post('transaction')
-  // async createTransaction(
-  //   @Req() req: JwtProtectedRequest,
-  //   @Body() body: CreateTransactionDto,
-  // ) {}
+  @UseGuards(JwtAuthGuard)
+  @Post('transaction')
+  async createTransaction(
+    @Req() req: JwtProtectedRequest,
+    @Body() body: CreateTransactionDto,
+  ) {
+    return this.expenseService.createTransaction(req.user.id, body);
+  }
 
-  // @Get('transaction')
-  // async getTransactions() { }
+  @UseGuards(JwtAuthGuard)
+  @Get('transaction')
+  async getTransactions(@Req() req: JwtProtectedRequest) {
+    return this.expenseService.getTransactions(req.user.id);
+  }
 
-  // @Patch('transactions')
-  // async updateTransaction() { }
+  @ApiParam({
+    name: 'id',
+    description: 'Transaction ID to update',
+    type: 'string',
+    example: '0f34aaaa-8194-4c90-902c-1155163cac76',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Patch('transaction/:id')
+  async updateTransaction(
+    @Req() req: JwtProtectedRequest,
+    @Param('id') id: string,
+    @Body() body: UpdateTransactionDto,
+  ) {
+    return this.expenseService.updateTransaction(req.user.id, id, body);
+  }
 
-  // @Delete('transactions/:id')
-  // async deleteTransaction() { }
+  @ApiParam({
+    name: 'id',
+    description: 'Transaction ID to update',
+    type: 'string',
+    example: '0f34aaaa-8194-4c90-902c-1155163cac76',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Delete('transaction/:id')
+  async deleteTransaction(
+    @Req() req: JwtProtectedRequest,
+    @Param('id') id: string,
+  ) {
+    await this.expenseService.deleteTransaction(req.user.id, id);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('category')

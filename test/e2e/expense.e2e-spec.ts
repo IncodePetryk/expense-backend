@@ -6,7 +6,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import Prisma from '@prisma/client';
 import * as cookieParser from 'cookie-parser';
 import type { Application } from 'express';
-import * as request from 'supertest';
 
 import { AppModule } from '@Src/app.module';
 import { createAdmin } from '@Src/utils/admin.util';
@@ -134,6 +133,7 @@ describe('AppController (e2e)', () => {
 
     let admin: UserActions;
     let baseExpenseCategory: Prisma.BaseExpenseCategory;
+    let baseExpenseCategories: Prisma.BaseExpenseCategory[];
 
     it('fetch base expense categories', async () => {
       const { body } = await user.request({
@@ -207,6 +207,102 @@ describe('AppController (e2e)', () => {
       });
 
       expect(updatedBaseCategory).toBeUndefined;
+    });
+
+    it('create transaction', async () => {
+      baseExpenseCategories = await prisma.expenseCategory.findMany({
+        where: {
+          userId: user.user.id,
+        },
+      });
+
+      const date = new Date();
+
+      const { body } = await user.request({
+        url: '/expense/transaction',
+        method: 'post',
+        send: {
+          label: 'Milk',
+          amount: 50,
+          date,
+          expenseCategoryId: baseExpenseCategories.find(
+            (category) => category.label === 'Food',
+          ).id,
+        },
+        expect: 201,
+      });
+
+      expect(body).toBeDefined();
+
+      const transactionFromDb = await prisma.transaction.findFirst({
+        where: {
+          id: body.id,
+        },
+      });
+
+      expect(transactionFromDb).toBeDefined();
+      expect(transactionFromDb.label).toBe('Milk');
+      expect(transactionFromDb.amount).toBe(50);
+      expect(transactionFromDb.date).toBeDefined();
+      expect(transactionFromDb.expenseCategoryId).toBeDefined();
+    });
+
+    it('fetch user transactions', async () => {
+      const { body } = await user.request({
+        url: '/expense/transaction',
+        method: 'get',
+        expect: 200,
+      });
+
+      expect(body).toHaveLength(1);
+    });
+
+    it('update transaction', async () => {
+      const { body: transaction } = await user.request({
+        url: '/expense/transaction',
+        method: 'get',
+      });
+
+      const { body } = await user.request({
+        url: '/expense/transaction/' + transaction[0].id,
+        method: 'patch',
+        send: {
+          amount: 100,
+        },
+        expect: 200,
+      });
+
+      expect(body.amount).toBe(100);
+
+      const transactionFromDb = await prisma.transaction.findFirst({
+        where: {
+          id: body.id,
+        },
+      });
+
+      expect(transactionFromDb.amount).toBe(100);
+    })
+
+    it('delete transaction', async () => {
+      const { body: transaction } = await user.request({
+        url: '/expense/transaction',
+        method: 'get',
+      });
+
+      expect(transaction).toHaveLength(1);
+
+      const { body } = await user.request({
+        url: '/expense/transaction/' + transaction[0].id,
+        method: 'delete',
+        expect: 200,
+      });
+
+      const { body: transactionAfter } = await user.request({
+        url: '/expense/transaction',
+        method: 'get',
+      });
+
+      expect(transactionAfter).toHaveLength(0);
     });
   });
 });

@@ -29,11 +29,17 @@ export class ExpenseService {
       },
     });
 
-    const expenseCategoryCandidate = await this.expenseCategoryService.findFirst({
-      where: {
-        id: data.expenseCategoryId,
-      },
-    });
+    const expenseCategoryCandidate =
+      await this.expenseCategoryService.findFirst({
+        where: {
+          id: data.expenseCategoryId,
+        },
+      });
+
+    this.expenseCategoryService.checkIfCategoryBelongsToUser(
+      userCandidate,
+      expenseCategoryCandidate,
+    );
 
     return this.transactionService.create({
       data: {
@@ -42,7 +48,7 @@ export class ExpenseService {
         userId: userCandidate.id,
         expenseCategoryId: expenseCategoryCandidate.id,
       },
-    })
+    });
   }
 
   async getTransactions(userId: string) {
@@ -53,24 +59,29 @@ export class ExpenseService {
     });
   }
 
-  async updateTransaction(userId: string, transactionId: string, data: UpdateTransactionDto) {
+  async updateTransaction(
+    userId: string,
+    transactionId: string,
+    data: UpdateTransactionDto,
+  ) {
     const userCandidate = await this.userService.getExists({
       where: {
         id: userId,
       },
     });
 
-    const expenseCategoryCandidate = await this.expenseCategoryService.findFirst({
-      where: {
-        id: data.expenseCategoryId,
-      },
-    });
+    const expenseCategoryCandidate =
+      await this.expenseCategoryService.findFirst({
+        where: {
+          id: data.expenseCategoryId,
+        },
+      });
 
     const transactionCandidate = await this.transactionService.getExisting({
       where: {
         id: transactionId,
       },
-    })
+    });
 
     return this.transactionService.update({
       where: {
@@ -81,7 +92,7 @@ export class ExpenseService {
         userId: userCandidate.id,
         expenseCategoryId: expenseCategoryCandidate.id,
       },
-    })
+    });
   }
 
   async deleteTransaction(userId: string, transactionId: string) {
@@ -97,13 +108,16 @@ export class ExpenseService {
       },
     });
 
-    this.transactionService.checkIfTransactionBelongsToUser(userCandidate, transactionCandidate);
+    this.transactionService.checkIfTransactionBelongsToUser(
+      userCandidate,
+      transactionCandidate,
+    );
 
     await this.transactionService.delete({
       where: {
         id: transactionCandidate.id,
-      }
-    })
+      },
+    });
   }
 
   async createExpenseCategory(userId: string, data: CreateExpenseCategoryDto) {
