@@ -5,7 +5,19 @@ Read the requirements for the project [here](./Requirements.md)
 ## Tech stack
 
 - Nest.js
-- Prisma
+- Prisma - ORM
+- PostgreSQL in Docker
+- Class-validator - for validation
+- Jest - testing
+
+Development environment:
+
+- Husky - git hooks
+- commitlint - commit message validation
+- lint-staged - lint in staged
+- ESLint
+- Prettier
+- EditorConfig
 
 ## Local run
 
