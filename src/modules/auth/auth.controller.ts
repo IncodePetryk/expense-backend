@@ -11,7 +11,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AuthService } from '@Module/auth/auth.service';
@@ -24,9 +24,11 @@ import { LocalAuthGuard } from '@Module/auth/local-auth.guard';
 import { JwtTokensPair } from '@Module/auth/tokens.service';
 import {
   ChangePasswordDto,
+  SessionsDto,
   LogInDto,
   RegisterDto,
   UpdateSessionDto,
+  LogInResponseDto,
 } from '@Src/modules/auth/dto/auth.dto';
 import { DeviceName } from '@Src/utils/device-name.decorator';
 import { GetCookies } from '@Src/utils/get-cookies.decorator';
@@ -34,13 +36,16 @@ import { GetCookies } from '@Src/utils/get-cookies.decorator';
 @ApiTags('Authentication / authorization')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
+  @ApiOperation({ description: 'Register new user' })
   @Post('register')
   async register(@Body() body: RegisterDto) {
     return this.authService.register(body);
   }
 
+  @ApiOperation({ description: 'Log-in user' })
+  @ApiResponse({ type: LogInResponseDto })
   @ApiBody({ type: LogInDto })
   @UseGuards(LocalAuthGuard)
   @Get('login')
@@ -54,11 +59,14 @@ export class AuthController {
     this.setCookies(res, tokens);
   }
 
+  @ApiOperation({ description: 'Log-out user' })
   @Get('logout')
   async logOut(@GetCookies('refreshToken') refreshToken: string) {
     await this.authService.logOut(refreshToken);
   }
 
+  @ApiOperation({ description: 'Refresh tokens' })
+  @ApiBasicAuth('Bearer')
   @Get('refresh')
   async refresh(
     @Res() res: Response,
@@ -69,12 +77,18 @@ export class AuthController {
     this.setCookies(res, tokens);
   }
 
+  @ApiOperation({ description: 'Get sessions' })
+  @ApiResponse({ type: [SessionsDto] })
+  @ApiBasicAuth('Bearer')
   @UseGuards(JwtAuthGuard)
   @Get('session')
   async getSessions(@Req() req: JwtProtectedRequest) {
     return this.authService.getSessions(req.user.id);
   }
 
+  @ApiOperation({ description: 'Delete session with specified ID' })
+  @ApiParam({ name: 'id', type: 'string', example: '0f34aaaa-8194-4c90-902c-1155163c9911' })
+  @ApiBasicAuth('Bearer')
   @UseGuards(JwtAuthGuard)
   @Delete('session/:id')
   async deleteSession(
@@ -84,6 +98,10 @@ export class AuthController {
     return this.authService.deleteSessionById(req.user.id, sessionId);
   }
 
+  @ApiOperation({ description: 'Update session name' })
+  @ApiParam({ name: 'id', type: 'string', example: '0f34aaaa-8194-4c90-902c-1155163cac76' })
+  @ApiResponse({ type: SessionsDto })
+  @ApiBasicAuth('Bearer')
   @UseGuards(JwtAuthGuard)
   @Patch('session/:id')
   async updateSession(
@@ -93,6 +111,8 @@ export class AuthController {
     return this.authService.updateSession(id, body);
   }
 
+  @ApiOperation({ description: 'Change user password' })
+  @ApiBasicAuth('Bearer')
   @UseGuards(JwtAuthGuard)
   @Patch('change-password')
   async changePassword(
