@@ -7,6 +7,34 @@ Read the requirements for the project [here](./Requirements.md)
 - Nest.js
 - Prisma
 
+## Local run
+
+Install packages:
+
+```sh
+yarn install
+```
+
+Start Docker:
+
+```sh
+docker compose up -d
+```
+
+> or user your own database, but then you will need to update .env file
+
+Start servicer:
+
+```sh
+yarn start
+```
+
+Run test:
+
+```sh
+yarn test
+```
+
 ## Development steps
 
 - [x] initialize the project
