@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import Prisma from '@prisma/client';
 
 export class CreateExpenseCategoryDto {
   @ApiProperty({
@@ -47,15 +50,23 @@ export class ExpenseCategoryDto {
   readonly label: string;
 }
 
-export class CreateTransactionDto {
+export class CreateTransactionDto implements Pick<Prisma.Transaction, 'label' | 'expenseCategoryId' | 'amount'> {
+  @ApiProperty({
+    description: 'Transaction date, by default `now`',
+    example: '2023-02-03T17:09:38.384Z',
+    type: 'string',
+  })
+  @IsOptional()
+  @IsDateString()
+  date?: string;
+
   @ApiProperty({
     description: 'Expense category ID',
     example: 'fb3db38e-0c04-463f-a27b-77127790bdca',
     type: 'string',
   })
   @IsUUID()
-  @IsString()
-  readonly categoryId: string;
+  readonly expenseCategoryId: string;
 
   @ApiProperty({
     description: 'Transaction label',
@@ -77,3 +88,5 @@ export class CreateTransactionDto {
   @IsNumber()
   readonly amount: number;
 }
+
+export class UpdateTransactionDto extends CreateTransactionDto { }
