@@ -5,26 +5,26 @@ import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class SessionService {
-  constructor() {}
+  constructor() { }
 
   async create(data: Prisma.Prisma.SessionCreateArgs) {
-    return prisma.session.create(data);
+    return await prisma.session.create(data);
   }
 
   async delete(data: Prisma.Prisma.SessionDeleteArgs) {
-    return prisma.session.delete(data);
+    return await prisma.session.delete(data);
   }
 
   async deleteMany(data: Prisma.Prisma.SessionDeleteManyArgs) {
-    return prisma.session.deleteMany(data);
+    return await prisma.session.deleteMany(data);
   }
 
   async findMany(data: Prisma.Prisma.SessionFindManyArgs) {
-    return prisma.session.findMany(data);
+    return await prisma.session.findMany(data);
   }
 
   async findFirst(data: Prisma.Prisma.SessionFindFirstArgs) {
-    return prisma.session.findFirst(data);
+    return await prisma.session.findFirst(data);
   }
 
   async getExisting(
@@ -60,10 +60,10 @@ export class SessionService {
       throw new BadRequestException('Session not exists');
     }
 
-    return this.update(data);
+    return await this.update(data);
   }
 
   async update(data: Prisma.Prisma.SessionUpdateArgs) {
-    return prisma.session.update(data);
+    return await prisma.session.update(data);
   }
 }

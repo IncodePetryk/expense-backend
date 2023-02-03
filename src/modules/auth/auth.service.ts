@@ -4,6 +4,7 @@ import * as bcryptjs from 'bcryptjs';
 
 import {
   ChangePasswordDto,
+  LogInDto,
   RegisterDto,
   UpdateSessionDto,
 } from '@Module/auth/dto/auth.dto';
@@ -11,6 +12,7 @@ import { SessionService } from '@Module/auth/session.service';
 import { TokensService } from '@Module/auth/tokens.service';
 import { UserService } from '@Module/user/user.service';
 import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
+import { useContainer } from 'class-validator';
 
 @Injectable()
 export class AuthService {
@@ -58,12 +60,22 @@ export class AuthService {
     // TODO create list of basic expense categories
   }
 
-  async logIn(user: Prisma.User, deviceName: string) {
-    const tokens = await this.tokensService.generatePairTokens({ id: user.id });
+  async logIn(data: LogInDto, deviceName: string) {
+    const userCandidate = await this.userService.getExists({
+      where: {
+        email: data.email,
+      },
+    })
+
+    if (!bcryptjs.compareSync(data.password, userCandidate.password)) {
+      throw new BadRequestException('Bad password');
+    }
+
+    const tokens = await this.tokensService.generatePairTokens({ id: userCandidate.id });
 
     await this.sessionService.create({
       data: {
-        userId: user.id,
+        userId: userCandidate.id,
         deviceName,
         refreshToken: tokens.refreshToken,
       },
@@ -199,22 +211,5 @@ export class AuthService {
         userId,
       },
     });
-  }
-
-  async validateUser(
-    email: string,
-    pass: string,
-  ): Promise<Omit<Prisma.User, 'password'>> {
-    const user = await this.userService.findFirst({
-      where: {
-        email,
-      },
-    });
-
-    if (user && bcryptjs.compareSync(pass, user.password)) {
-      return user;
-    }
-
-    return null;
   }
 }

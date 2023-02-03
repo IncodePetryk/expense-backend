@@ -1,4 +1,4 @@
-import { SetEnvAsString, getEnv } from '@Src/utils/env-variable.util';
+import { getEnv } from '@Src/utils/env-variable.util';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';

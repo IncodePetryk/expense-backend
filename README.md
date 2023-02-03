@@ -19,7 +19,7 @@ Read the requirements for the project [here](./Requirements.md)
 - [x] setup Prisma
 - [x] add Postgres in Docker
 - [x] setup Swagger
-- [ ] create `Auth` modules
+- [x] create `Auth` modules
   - [x] endpoints
     - [x] POST register
     - [x] POST login
@@ -30,7 +30,7 @@ Read the requirements for the project [here](./Requirements.md)
     - [x] POST update session
     - [x] POST change password
   - [x] write Swagger docs
-  - [ ] write e2e tests
+  - [x] write e2e tests
 - [ ] create `Expense` module
   - [ ] endpoints
     - [ ] POST transaction

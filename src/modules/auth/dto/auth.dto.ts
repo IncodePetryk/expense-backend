@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MaxLength, MinLength, minLength } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  MaxLength,
+  MinLength
+} from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty({
@@ -15,7 +20,7 @@ export class RegisterDto {
 
   @ApiProperty({
     name: 'Email',
-    description: 'New user\'email',
+    description: "New user'email",
     example: 'john@mail.com',
     minLength: 5,
     maxLength: 320,
@@ -39,7 +44,7 @@ export class RegisterDto {
 export class LogInDto {
   @ApiProperty({
     name: 'Email',
-    description: 'New user\'email',
+    description: "New user'email",
     example: 'john@mail.com',
     minLength: 5,
     maxLength: 320,
@@ -63,7 +68,8 @@ export class LogInDto {
 export class LogInResponseDto {
   @ApiProperty({
     description: 'Access token',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
   })
   @IsString()
   accessToken: string;
@@ -86,7 +92,7 @@ export class UpdateSessionDto {
 export class ChangePasswordDto {
   @ApiProperty({
     name: 'Old password',
-    description: 'Old user\'s password',
+    description: "Old user's password",
     example: 'Ci18&hl1',
     minLength: 4,
     maxLength: 20,

@@ -57,7 +57,7 @@ export class UserActions {
    */
   async register() {
     await request(this.app)
-      .post('/auth/sign-up')
+      .post('/auth/register')
       .send({
         username: this._username,
         email: this._email,
@@ -66,7 +66,7 @@ export class UserActions {
       .expect(201);
 
     const signIn = await request(this.app)
-      .post('/auth/sign-in')
+      .get('/auth/login')
       .send({
         username: this._username,
         email: this._email,
@@ -78,13 +78,11 @@ export class UserActions {
 
     this._accessToken = signIn.body.accessToken;
     this._refreshToken = cookies.refreshToken.value;
-
-    await this.getUser();
   }
 
   async logIn(expect = 200) {
     const signIn = await request(this.app)
-      .post('/auth/sign-in')
+      .get('/auth/login')
       .send({
         username: this._username,
         email: this._email,
@@ -96,20 +94,6 @@ export class UserActions {
 
     this._accessToken = signIn.body.accessToken;
     this._refreshToken = cookies.refreshToken.value;
-
-    await this.getUser();
-  }
-
-  async getUser(expect = 200) {
-    const response = await this.request({
-      url: '/user',
-      method: 'get',
-      expect,
-    });
-
-    this._user = response.body;
-
-    return response;
   }
 
   /**
@@ -121,7 +105,7 @@ export class UserActions {
   async request({ url, method, query, send, expect }: RequestI) {
     if (expect) {
       return await request(this.app)
-        [method](url)
+      [method](url)
         .set({ Authorization: 'Bearer ' + this._accessToken })
         .query(query)
         .send(send)
@@ -129,7 +113,7 @@ export class UserActions {
     }
 
     return await request(this.app)
-      [method](url)
+    [method](url)
       .set({ Authorization: 'Bearer ' + this._accessToken })
       .query(query)
       .send(send);

@@ -12,6 +12,7 @@ import { AppModule } from '@Src/app.module';
 import { clearDatabase } from '@Test/clear-database';
 import getCookies from '@Test/utils/get-cookies';
 import { sleep } from '@Test/utils/sleep';
+import { UserActions } from '@Test/utils/user-actions';
 
 describe('AppController (e2e)', () => {
   let app: Application;
@@ -209,6 +210,52 @@ describe('AppController (e2e)', () => {
       expect(userWithNewPassword.password).not.toBe(userFromDb.password);
 
       userFromDb = userWithNewPassword;
+    });
+  });
+
+  describe('other cases', () => {
+    test('try register with already exists email', async () => {
+      const { body } = await request(app)
+        .post('/auth/register')
+        .send({
+          email: 'some@email.com',
+          username: 'guess1',
+          password: 'password',
+        })
+        .expect(400);
+
+      expect(body.message).toBe('User with specified email already exists');
+    });
+
+    test('try register with already exists username', async () => {
+      const { body } = await request(app)
+        .post('/auth/register')
+        .send({
+          email: 'some1@email.com',
+          username: 'guess',
+          password: 'password',
+        })
+        .expect(400);
+
+      expect(body.message).toBe('User with specified username already exists');
+    });
+
+    test('try login with bad password', async () => {
+      await request(app)
+        .post('/auth/register')
+        .send({
+          email: 'some3@email.com',
+          username: 'guess3',
+          password: 'password',
+        })
+        .expect(201);
+
+      const { body } = await request(app)
+        .get('/auth/login')
+        .send({
+          email: 'some3@email.com',
+          password: 'some-one',
+        })
     });
   });
 });

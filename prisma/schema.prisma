@@ -11,11 +11,12 @@ datasource db {
 }
 
 model User {
-  id          String  @id @default(uuid())
-  email       String  @db.VarChar(320)
-  username    String  @db.VarChar(20)
-  displayName String? @db.VarChar(40)
-  password    String  @db.VarChar(60)
+  id          String   @id @default(uuid())
+  email       String   @db.VarChar(320)
+  username    String   @db.VarChar(20)
+  displayName String?  @db.VarChar(40)
+  password    String   @db.VarChar(60)
+  // role        UserRole @default(user)
 
   sessions          Session[]
   expenseCategories ExpenseCategory[]
@@ -74,4 +75,9 @@ model Transaction {
   updatedAt DateTime @updatedAt
 
   @@map("Transactions")
+}
+
+enum UserRole {
+  admin
+  user
 }

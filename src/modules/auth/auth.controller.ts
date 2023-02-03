@@ -20,15 +20,14 @@ import {
   LocalProtectedRequest,
 } from '@Module/auth/interfaces/protected-request.interface';
 import { JwtAuthGuard } from '@Module/auth/jwt-auth.guard';
-import { LocalAuthGuard } from '@Module/auth/local-auth.guard';
 import { JwtTokensPair } from '@Module/auth/tokens.service';
 import {
   ChangePasswordDto,
-  SessionsDto,
   LogInDto,
-  RegisterDto,
-  UpdateSessionDto,
   LogInResponseDto,
+  RegisterDto,
+  SessionsDto,
+  UpdateSessionDto,
 } from '@Src/modules/auth/dto/auth.dto';
 import { DeviceName } from '@Src/utils/device-name.decorator';
 import { GetCookies } from '@Src/utils/get-cookies.decorator';
@@ -46,27 +45,30 @@ export class AuthController {
 
   @ApiOperation({ description: 'Log-in user' })
   @ApiResponse({ type: LogInResponseDto })
-  @ApiBody({ type: LogInDto })
-  @UseGuards(LocalAuthGuard)
   @Get('login')
   async logIn(
-    @Req() req: LocalProtectedRequest,
     @Res() res: Response,
+    @Body() body: LogInDto,
     @DeviceName() deviceName: string,
   ) {
-    const tokens = await this.authService.logIn(req.user, deviceName);
+    const tokens = await this.authService.logIn(body, deviceName);
 
     this.setCookies(res, tokens);
   }
 
   @ApiOperation({ description: 'Log-out user' })
   @Get('logout')
-  async logOut(@GetCookies('refreshToken') refreshToken: string) {
+  async logOut(
+    @Res() res: Response,
+    @GetCookies('refreshToken') refreshToken: string,
+  ) {
     await this.authService.logOut(refreshToken);
+
+    res.clearCookie('refreshToken');
+    res.sendStatus(200);
   }
 
   @ApiOperation({ description: 'Refresh tokens' })
-  @ApiBasicAuth('Bearer')
   @Get('refresh')
   async refresh(
     @Res() res: Response,
