@@ -1,4 +1,3 @@
-import { BaseExpenseCategoryService } from '@Module/expense/base-expense-category.service';
 import {
   BadRequestException,
   Injectable,
@@ -6,6 +5,7 @@ import {
 } from '@nestjs/common';
 import Prisma from '@prisma/client';
 
+import { BaseExpenseCategoryService } from '@Module/expense/base-expense-category.service';
 import { prisma } from '@Src/shared/prisma';
 
 @Injectable()

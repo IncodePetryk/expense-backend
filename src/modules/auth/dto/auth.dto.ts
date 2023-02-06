@@ -3,7 +3,6 @@ import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty({
-    name: 'Username',
     example: 'josh',
     minLength: 4,
     maxLength: 20,
@@ -14,7 +13,6 @@ export class RegisterDto {
   readonly username: string;
 
   @ApiProperty({
-    name: 'Email',
     description: "New user'email",
     example: 'john@mail.com',
     minLength: 5,
@@ -24,7 +22,6 @@ export class RegisterDto {
   readonly email: string;
 
   @ApiProperty({
-    name: 'Password',
     description: 'User password',
     example: 'Ci18&hl1',
     minLength: 4,
@@ -38,7 +35,6 @@ export class RegisterDto {
 
 export class LogInDto {
   @ApiProperty({
-    name: 'Email',
     description: "New user'email",
     example: 'john@mail.com',
     minLength: 5,
@@ -48,7 +44,6 @@ export class LogInDto {
   readonly email: string;
 
   @ApiProperty({
-    name: 'Password',
     description: 'User password',
     example: 'Ci18&hl1',
     minLength: 4,
@@ -74,7 +69,6 @@ export class RefreshDto extends LogInResponseDto {}
 
 export class UpdateSessionDto {
   @ApiProperty({
-    name: 'Device Name',
     description: 'User device name',
     example: 'MacBook Pro',
     minLength: 4,
@@ -88,7 +82,6 @@ export class UpdateSessionDto {
 
 export class ChangePasswordDto {
   @ApiProperty({
-    name: 'Old password',
     description: "Old user's password",
     example: 'Ci18&hl1',
     minLength: 4,
@@ -100,7 +93,6 @@ export class ChangePasswordDto {
   readonly oldPassword: string;
 
   @ApiProperty({
-    name: 'New password',
     description: 'New password',
     example: 'cja8*ia&',
     minLength: 4,

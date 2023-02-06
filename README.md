@@ -84,6 +84,6 @@ yarn test
     - [x] DELETE transaction
     - [x] GET transactions
     - [x] GET ballance (get the current balance)
-  - [ ] write Swagger docs
+  - [x] write Swagger docs
   - [x] write e2e tests
 - [ ] deploy

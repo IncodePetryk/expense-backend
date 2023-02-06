@@ -9,7 +9,7 @@ import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class TransactionService {
-  constructor() { }
+  constructor() {}
 
   async getExisting(
     data: Prisma.Prisma.TransactionFindFirstArgs,
@@ -22,7 +22,7 @@ export class TransactionService {
         callback();
       }
 
-      throw new NotFoundException('Expense category does not exists');
+      throw new NotFoundException('Transaction does not exists');
     }
 
     return candidate;

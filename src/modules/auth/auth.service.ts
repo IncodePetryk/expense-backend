@@ -9,10 +9,9 @@ import {
 } from '@Module/auth/dto/auth.dto';
 import { SessionService } from '@Module/auth/session.service';
 import { TokensService } from '@Module/auth/tokens.service';
+import { ExpenseCategoryService } from '@Module/expense/expense-category.service';
 import { UserService } from '@Module/user/user.service';
 import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
-import { ExpenseService } from '@Module/expense/expense.service';
-import { ExpenseCategoryService } from '@Module/expense/expense-category.service';
 
 @Injectable()
 export class AuthService {
@@ -23,9 +22,8 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly tokensService: TokensService,
     private readonly sessionService: SessionService,
-    private readonly expenseService: ExpenseService,
     private readonly expenseCategoryService: ExpenseCategoryService,
-  ) {}
+  ) { }
 
   async register(data: RegisterDto) {
     const checkEmailExists = await this.userService.findFirst({

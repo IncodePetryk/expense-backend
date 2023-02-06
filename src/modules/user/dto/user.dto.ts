@@ -24,7 +24,7 @@ export class UserDto implements Omit<Prisma.User, 'password'> {
     description: 'User display name',
     type: 'string',
   })
-  readonly displayName: string;
+  readonly displayName: string | null;
 
   @ApiProperty({
     description: 'User role',

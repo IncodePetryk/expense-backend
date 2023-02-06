@@ -1,14 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import Prisma from '@prisma/client';
 
 import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class SessionService {
-  constructor() { }
+  constructor() {}
 
   async create(data: Prisma.Prisma.SessionCreateArgs) {
     return await prisma.session.create(data);

@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -18,7 +20,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
@@ -41,7 +43,7 @@ import { GetCookies } from '@Src/utils/get-cookies.decorator';
 @ApiTags('Authentication / authorization')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ description: 'Register new user' })
   @ApiOkResponse({ description: 'User registered successfully' })
@@ -52,9 +54,12 @@ export class AuthController {
   }
 
   @ApiOperation({ description: 'Log-in user' })
-  @ApiBadRequestResponse({ description: 'Bad password or user does not exists' })
+  @ApiBadRequestResponse({
+    description: 'Bad password or user does not exists',
+  })
   @ApiOkResponse({ type: LogInResponseDto })
-  @Get('login')
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
   async logIn(
     @Res() res: Response,
     @Body() body: LogInDto,

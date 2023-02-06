@@ -5,7 +5,7 @@ import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class BaseExpenseCategoryService {
-  constructor() { }
+  constructor() {}
 
   async getExisting(
     data: Prisma.Prisma.BaseExpenseCategoryFindFirstArgs,
