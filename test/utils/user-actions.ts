@@ -63,7 +63,7 @@ export class UserActions {
     });
 
     const signIn = await request(this.app)
-      .get('/auth/login')
+      .post('/auth/login')
       .send({
         username: this._username,
         email: this._email,
@@ -81,7 +81,7 @@ export class UserActions {
 
   async logIn(expect = 200) {
     const signIn = await request(this.app)
-      .get('/auth/login')
+      .post('/auth/login')
       .send({
         username: this._username,
         email: this._email,
@@ -117,7 +117,7 @@ export class UserActions {
   async request({ url, method, query, send, expect }: RequestI) {
     if (expect) {
       return await request(this.app)
-        [method](url)
+      [method](url)
         .set({ Authorization: 'Bearer ' + this._accessToken })
         .query(query)
         .send(send)
@@ -125,7 +125,7 @@ export class UserActions {
     }
 
     return await request(this.app)
-      [method](url)
+    [method](url)
       .set({ Authorization: 'Bearer ' + this._accessToken })
       .query(query)
       .send(send);

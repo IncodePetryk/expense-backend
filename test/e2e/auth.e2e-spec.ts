@@ -69,7 +69,7 @@ describe('AppController (e2e)', () => {
     it('log-in user', async () => {
       expect(await prisma.session.count()).toBe(0);
 
-      const r = await request(app).get('/auth/login').send(user).expect(200);
+      const r = await request(app).post('/auth/login').send(user).expect(200);
 
       const cookies = getCookies(r);
 
@@ -117,7 +117,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('get sessions', async () => {
-      const r = await request(app).get('/auth/login').send(user).expect(200);
+      const r = await request(app).post('/auth/login').send(user).expect(200);
       const cookies = getCookies(r);
       user.refreshToken = cookies.refreshToken.value;
       user.accessToken = r.body.accessToken;
@@ -145,7 +145,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('rename session', async () => {
-      const r = await request(app).get('/auth/login').send(user).expect(200);
+      const r = await request(app).post('/auth/login').send(user).expect(200);
       const cookies = getCookies(r);
       user.refreshToken = cookies.refreshToken.value;
       user.accessToken = r.body.accessToken;
@@ -175,10 +175,10 @@ describe('AppController (e2e)', () => {
 
     it('change user password', async () => {
       // Create other session to check if they will be deleted after password change
-      await request(app).get('/auth/login').send(user).expect(200);
-      await request(app).get('/auth/login').send(user).expect(200);
-      await request(app).get('/auth/login').send(user).expect(200);
-      await request(app).get('/auth/login').send(user).expect(200);
+      await request(app).post('/auth/login').send(user).expect(200);
+      await request(app).post('/auth/login').send(user).expect(200);
+      await request(app).post('/auth/login').send(user).expect(200);
+      await request(app).post('/auth/login').send(user).expect(200);
 
       const sessions = await prisma.session.findMany({
         where: {
@@ -252,7 +252,7 @@ describe('AppController (e2e)', () => {
         })
         .expect(201);
 
-      await request(app).get('/auth/login').send({
+      await request(app).post('/auth/login').send({
         email: 'some3@email.com',
         password: 'some-one',
       });
