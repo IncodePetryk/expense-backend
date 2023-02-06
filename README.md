@@ -86,4 +86,4 @@ yarn test
     - [x] GET ballance (get the current balance)
   - [x] write Swagger docs
   - [x] write e2e tests
-- [ ] deploy
+- [x] deploy
