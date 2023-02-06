@@ -9,7 +9,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { JwtProtectedRequest } from '@Module/auth/interfaces/protected-request.interface';
 import { JwtAuthGuard } from '@Module/auth/jwt-auth.guard';
@@ -21,6 +21,7 @@ import {
 } from '@Module/expense/dto/expense-category.dto';
 import { ExpenseService } from '@Module/expense/expense.service';
 
+@ApiTags('Expenses')
 @Controller('expense')
 export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) { }
