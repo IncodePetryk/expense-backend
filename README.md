@@ -35,6 +35,12 @@ docker compose up -d
 
 > or user your own database, but then you will need to update .env file
 
+Run migrations:
+
+```sh
+yarn migrate:dev
+```
+
 Start servicer:
 
 ```sh
