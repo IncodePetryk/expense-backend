@@ -16,6 +16,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -43,10 +44,10 @@ import { GetCookies } from '@Src/utils/get-cookies.decorator';
 @ApiTags('Authentication / authorization')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiOperation({ description: 'Register new user' })
-  @ApiOkResponse({ description: 'User registered successfully' })
+  @ApiCreatedResponse({ description: 'User registered successfully' })
   @ApiBadRequestResponse({ description: 'Username or email already exists' })
   @Post('register')
   async register(@Body() body: RegisterDto) {
@@ -57,7 +58,7 @@ export class AuthController {
   @ApiBadRequestResponse({
     description: 'Bad password or user does not exists',
   })
-  @ApiOkResponse({ type: LogInResponseDto })
+  @ApiCreatedResponse({ description: 'User logged-in successfully', type: LogInResponseDto })
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async logIn(
