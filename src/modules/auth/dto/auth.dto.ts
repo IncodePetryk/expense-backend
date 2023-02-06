@@ -70,6 +70,8 @@ export class LogInResponseDto {
   accessToken: string;
 }
 
+export class RefreshDto extends LogInResponseDto {}
+
 export class UpdateSessionDto {
   @ApiProperty({
     name: 'Device Name',

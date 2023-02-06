@@ -1,11 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import Prisma from '@prisma/client';
 
 import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class TransactionService {
-  constructor() {}
+  constructor() { }
 
   async getExisting(
     data: Prisma.Prisma.TransactionFindFirstArgs,
@@ -18,7 +22,7 @@ export class TransactionService {
         callback();
       }
 
-      throw new BadRequestException('Expense category not exists');
+      throw new NotFoundException('Expense category does not exists');
     }
 
     return candidate;

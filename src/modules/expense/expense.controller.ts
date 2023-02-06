@@ -24,7 +24,7 @@ import { ExpenseService } from '@Module/expense/expense.service';
 @ApiTags('Expenses')
 @Controller('expense')
 export class ExpenseController {
-  constructor(private readonly expenseService: ExpenseService) { }
+  constructor(private readonly expenseService: ExpenseService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('transaction')

@@ -28,7 +28,7 @@ export class UserDto implements Omit<Prisma.User, 'password'> {
 
   @ApiProperty({
     description: 'User role',
-    enum: ['user', 'admin']
+    enum: ['user', 'admin'],
   })
   readonly role: Prisma.UserRole;
 

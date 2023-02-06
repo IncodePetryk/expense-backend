@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import Prisma from '@prisma/client';
 
 import { prisma } from '@Src/shared/prisma';
 
 @Injectable()
 export class UserService {
-  constructor() {}
+  constructor() { }
 
   async create(data: Prisma.Prisma.UserCreateArgs) {
     return prisma.user.create(data);
@@ -19,7 +19,7 @@ export class UserService {
     return prisma.user.findMany(data);
   }
 
-  async getExists(
+  async getExisting(
     data: Prisma.Prisma.UserFindFirstArgs,
     callback?: () => never,
   ) {
@@ -30,7 +30,7 @@ export class UserService {
         callback();
       }
 
-      throw new BadRequestException('User not exists');
+      throw new NotFoundException('User does not exists');
     }
 
     return userCandidate;

@@ -63,7 +63,7 @@ export class AuthService {
   }
 
   async logIn(data: LogInDto, deviceName: string) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         email: data.email,
       },
@@ -158,7 +158,7 @@ export class AuthService {
     });
 
     if (candidate.userId !== userId) {
-      throw new BadRequestException('This session not belongs to you');
+      throw new BadRequestException('This session does not belong to you');
     }
 
     await this.sessionService.delete({
@@ -185,7 +185,7 @@ export class AuthService {
 
   async changePassword(userId: string, data: ChangePasswordDto) {
     // Change password logic
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },

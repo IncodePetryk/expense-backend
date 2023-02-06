@@ -1,5 +1,9 @@
 import { BaseExpenseCategoryService } from '@Module/expense/base-expense-category.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import Prisma from '@prisma/client';
 
 import { prisma } from '@Src/shared/prisma';
@@ -8,7 +12,7 @@ import { prisma } from '@Src/shared/prisma';
 export class ExpenseCategoryService {
   constructor(
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
-  ) {}
+  ) { }
 
   async getExisting(
     data: Prisma.Prisma.ExpenseCategoryFindFirstArgs,
@@ -21,7 +25,7 @@ export class ExpenseCategoryService {
         callback();
       }
 
-      throw new BadRequestException('Expense category not exists');
+      throw new NotFoundException('Expense category does not exists');
     }
 
     return candidate;

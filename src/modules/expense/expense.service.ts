@@ -20,10 +20,10 @@ export class ExpenseService {
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
     private readonly expenseCategoryService: ExpenseCategoryService,
     private readonly transactionService: TransactionService,
-  ) {}
+  ) { }
 
   async createTransaction(userId: string, data: CreateTransactionDto) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -64,7 +64,7 @@ export class ExpenseService {
     transactionId: string,
     data: UpdateTransactionDto,
   ) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -96,7 +96,7 @@ export class ExpenseService {
   }
 
   async deleteTransaction(userId: string, transactionId: string) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -121,7 +121,7 @@ export class ExpenseService {
   }
 
   async createExpenseCategory(userId: string, data: CreateExpenseCategoryDto) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -173,7 +173,7 @@ export class ExpenseService {
     categoryId: string,
     data: UpdateExpenseCategoryDto,
   ) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -201,7 +201,7 @@ export class ExpenseService {
   }
 
   async deleteExpenseCategory(userId: string, categoryId: string) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -271,7 +271,7 @@ export class ExpenseService {
     userId: string,
     data: CreateExpenseCategoryDto,
   ) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -305,7 +305,7 @@ export class ExpenseService {
     categoryId: string,
     data: UpdateExpenseCategoryDto,
   ) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -322,7 +322,7 @@ export class ExpenseService {
     });
 
     if (!categoryCandidate) {
-      throw new BadRequestException('Base category not exists');
+      throw new BadRequestException('Base category does not exists');
     }
 
     return this.baseExpenseCategoryService.update({
@@ -336,7 +336,7 @@ export class ExpenseService {
   }
 
   async deleteBaseCategory(userId: string, categoryId: string) {
-    const userCandidate = await this.userService.getExists({
+    const userCandidate = await this.userService.getExisting({
       where: {
         id: userId,
       },
@@ -353,7 +353,7 @@ export class ExpenseService {
     });
 
     if (!categoryCandidate) {
-      throw new BadRequestException('Base category not exists');
+      throw new BadRequestException('Base category does not exists');
     }
 
     this.baseExpenseCategoryService.delete({

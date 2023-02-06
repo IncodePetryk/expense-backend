@@ -9,4 +9,4 @@ import { AuthModule } from '@Src/modules/auth/auth.module';
   providers: [],
   imports: [AuthModule, UserModule, ExpenseModule],
 })
-export class AppModule { }
+export class AppModule {}
