@@ -40,6 +40,10 @@ export class TransactionService {
     return prisma.transaction.update(data);
   }
 
+  async updateMany(data: Prisma.Prisma.TransactionUpdateManyArgs) {
+    return prisma.transaction.updateMany(data);
+  }
+
   async delete(data: Prisma.Prisma.TransactionDeleteArgs) {
     return prisma.transaction.delete(data);
   }

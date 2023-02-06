@@ -9,17 +9,17 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiParam } from '@nestjs/swagger';
 
 import { JwtProtectedRequest } from '@Module/auth/interfaces/protected-request.interface';
 import { JwtAuthGuard } from '@Module/auth/jwt-auth.guard';
 import {
-  CreateTransactionDto,
   CreateExpenseCategoryDto,
+  CreateTransactionDto,
   UpdateExpenseCategoryDto,
   UpdateTransactionDto,
 } from '@Module/expense/dto/expense-category.dto';
 import { ExpenseService } from '@Module/expense/expense.service';
-import { ApiParam } from '@nestjs/swagger';
 
 @Controller('expense')
 export class ExpenseController {
@@ -137,5 +137,15 @@ export class ExpenseController {
     @Param('id') id: string,
   ) {
     await this.expenseService.deleteBaseCategory(req.user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('ballance')
+  async getBallance(@Req() req: JwtProtectedRequest) {
+    const ballance = await this.expenseService.getBallance(req.user.id);
+
+    return {
+      ballance,
+    };
   }
 }

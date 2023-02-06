@@ -281,7 +281,7 @@ describe('AppController (e2e)', () => {
       });
 
       expect(transactionFromDb.amount).toBe(100);
-    })
+    });
 
     it('delete transaction', async () => {
       const { body: transaction } = await user.request({
@@ -303,6 +303,104 @@ describe('AppController (e2e)', () => {
       });
 
       expect(transactionAfter).toHaveLength(0);
+    });
+
+    it("check behavior of transaction when delete it's expense category", async () => {
+      // Create expense category
+      const { body: expenseCategory } = await user.request({
+        url: '/expense/category',
+        method: 'post',
+        send: {
+          label: 'LabelToDelete',
+        },
+        expect: 201,
+      });
+
+      // Create transactions
+      const labels = ['Meal', 'Soda', 'Napkin'];
+
+      for (let i = 0; i < labels.length; i++) {
+        await user.request({
+          url: '/expense/transaction',
+          method: 'post',
+          send: {
+            label: labels[i],
+            amount: 50,
+            expenseCategoryId: expenseCategory.id,
+          },
+          expect: 201,
+        });
+      }
+
+      const transactionBefore = await prisma.transaction.findMany({
+        where: {
+          userId: user.user.id,
+        },
+      });
+
+      // Delete expense category
+      await user.request({
+        url: '/expense/category/' + expenseCategory.id,
+        method: 'delete',
+        expect: 200,
+      });
+
+      // Check transactions
+      const { body: transactions } = await user.request({
+        url: '/expense/transaction',
+        method: 'get',
+        expect: 200,
+      });
+
+      const otherExpenseCategory = await prisma.expenseCategory.findFirst({
+        where: {
+          userId: user.user.id,
+          label: 'Other',
+        },
+      });
+
+      for (let i = 0; i < transactionBefore.length; i++) {
+        expect(transactionBefore[i].expenseCategoryId).not.toBe(
+          otherExpenseCategory.id,
+        );
+      }
+
+      const transactionAfter = await prisma.transaction.findMany({
+        where: {
+          userId: user.user.id,
+        },
+      });
+
+      for (let i = 0; i < transactionAfter.length; i++) {
+        expect(transactionAfter[i].expenseCategoryId).toBe(
+          otherExpenseCategory.id,
+        );
+      }
+    });
+
+    it('get ballance', async () => {
+      const { body } = await user.request({
+        url: '/expense/ballance',
+        method: 'get',
+        expect: 200,
+      });
+
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          userId: user.user.id,
+        },
+        select: {
+          amount: true,
+        },
+      });
+
+      let ballance = 0;
+
+      for (let i = 0; i < transactions.length; i++) {
+        ballance += transactions[i].amount;
+      }
+
+      expect(body.ballance).toBe(ballance);
     });
   });
 });

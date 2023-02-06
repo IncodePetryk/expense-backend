@@ -73,11 +73,17 @@ yarn test
   - [x] write e2e tests
 - [ ] create `Expense` module
   - [x] endpoints
+    - [x] POST category
+    - [x] PATCH category
+    - [x] DELETE category
+    - [x] POST base-category
+    - [x] PATCH base-category
+    - [x] DELETE base-category
     - [x] POST transaction
     - [x] PATCH transaction
     - [x] DELETE transaction
     - [x] GET transactions
     - [x] GET ballance (get the current balance)
   - [ ] write Swagger docs
-  - [ ] write e2e tests
+  - [x] write e2e tests
 - [ ] deploy

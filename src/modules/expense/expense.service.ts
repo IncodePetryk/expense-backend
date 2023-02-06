@@ -20,7 +20,7 @@ export class ExpenseService {
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
     private readonly expenseCategoryService: ExpenseCategoryService,
     private readonly transactionService: TransactionService,
-  ) { }
+  ) {}
 
   async createTransaction(userId: string, data: CreateTransactionDto) {
     const userCandidate = await this.userService.getExists({
@@ -213,6 +213,37 @@ export class ExpenseService {
       },
     });
 
+    // Replace deleted category to 'Other'
+    const transactionsCandidates = await this.transactionService.findMany({
+      where: {
+        userId,
+        expenseCategoryId: categoryId,
+      },
+    });
+
+    if (transactionsCandidates.length) {
+      const otherExpenseCategory = await this.expenseCategoryService.findFirst({
+        where: {
+          userId,
+          label: 'Other',
+        },
+      });
+
+      if (!otherExpenseCategory) {
+        throw new BadRequestException("Other expense category doesn't exists");
+      }
+
+      await this.transactionService.updateMany({
+        where: {
+          userId,
+          expenseCategoryId: categoryId,
+        },
+        data: {
+          expenseCategoryId: otherExpenseCategory.id,
+        },
+      });
+    }
+
     this.expenseCategoryService.checkIfCategoryBelongsToUser(
       userCandidate,
       categoryCandidate,
@@ -330,5 +361,24 @@ export class ExpenseService {
         id: categoryId,
       },
     });
+  }
+
+  async getBallance(userId: string) {
+    const transactions = await this.transactionService.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        amount: true,
+      },
+    });
+
+    let ballance = 0;
+
+    for (let i = 0; i < transactions.length; i++) {
+      ballance += transactions[i].amount;
+    }
+
+    return ballance;
   }
 }

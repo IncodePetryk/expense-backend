@@ -91,7 +91,10 @@ export class CreateTransactionDto
   readonly amount: number;
 }
 
-export class UpdateTransactionDto implements Partial<Pick<Prisma.Transaction, 'label' | 'expenseCategoryId' | 'amount'>> {
+export class UpdateTransactionDto
+  implements
+    Partial<Pick<Prisma.Transaction, 'label' | 'expenseCategoryId' | 'amount'>>
+{
   @ApiProperty({
     description: 'Transaction date, by default `now`',
     example: '2023-02-03T17:09:38.384Z',
