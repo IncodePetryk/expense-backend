@@ -61,6 +61,7 @@ export class ExpenseCategoryService {
     }));
 
     await this.prismaService.expenseCategory.createMany({
+
       data: labels,
       skipDuplicates: true,
     });
