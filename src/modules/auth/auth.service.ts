@@ -9,7 +9,7 @@ import {
 } from '@Module/auth/dto/auth.dto';
 import { SessionService } from '@Module/auth/session.service';
 import { TokensService } from '@Module/auth/tokens.service';
-import { ExpenseCategoryService } from '@Module/expense/expense-category.service';
+import { ExpenseCategoryService } from '@Module/expense-category/expense-category.service';
 import { UserService } from '@Module/user/user.service';
 import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
 

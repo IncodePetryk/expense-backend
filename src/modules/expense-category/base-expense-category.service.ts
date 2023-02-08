@@ -5,9 +5,7 @@ import { PrismaService } from '@Shared/modules/prisma/prisma.service';
 
 @Injectable()
 export class BaseExpenseCategoryService {
-  constructor(
-    private readonly prismaService: PrismaService,
-  ) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async getExisting(
     data: Prisma.Prisma.BaseExpenseCategoryFindFirstArgs,

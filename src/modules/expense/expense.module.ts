@@ -1,26 +1,20 @@
 import { Module, forwardRef } from '@nestjs/common';
 
-import { BaseExpenseCategoryService } from '@Module/expense/base-expense-category.service';
-import { ExpenseCategoryService } from '@Module/expense/expense-category.service';
 import { ExpenseController } from '@Module/expense/expense.controller';
 import { ExpenseService } from '@Module/expense/expense.service';
-import { TransactionService } from '@Module/expense/transaction.service';
+import { TransactionService } from '@Module/transactions/transaction.service';
 import { UserModule } from '@Module/user/user.module';
+import { ExpenseCategoryModule } from '@Module/expense-category/expense-category.module';
+import { TransactionModule } from '@Module/transactions/transaction.module';
 
 @Module({
-  providers: [
-    ExpenseService,
-    ExpenseCategoryService,
-    BaseExpenseCategoryService,
-    TransactionService,
-  ],
+  providers: [ExpenseService, TransactionService],
   controllers: [ExpenseController],
-  imports: [forwardRef(() => UserModule)],
-  exports: [
-    ExpenseService,
-    ExpenseCategoryService,
-    BaseExpenseCategoryService,
-    TransactionService,
+  imports: [
+    forwardRef(() => UserModule),
+    ExpenseCategoryModule,
+    TransactionModule,
   ],
+  exports: [ExpenseService, TransactionService],
 })
 export class ExpenseModule {}

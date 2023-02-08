@@ -8,9 +8,7 @@ import Prisma from '@prisma/client';
 
 @Injectable()
 export class TransactionService {
-  constructor(
-    private readonly prismaService: PrismaService,
-  ) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async getExisting(
     data: Prisma.Prisma.TransactionFindFirstArgs,

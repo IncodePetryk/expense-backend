@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import Prisma from '@prisma/client';
 
-import { BaseExpenseCategoryService } from '@Module/expense/base-expense-category.service';
+import { BaseExpenseCategoryService } from '@Module/expense-category/base-expense-category.service';
 import { PrismaService } from '@Shared/modules/prisma/prisma.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class ExpenseCategoryService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
-  ) { }
+  ) {}
 
   async getExisting(
     data: Prisma.Prisma.ExpenseCategoryFindFirstArgs,
@@ -61,7 +61,6 @@ export class ExpenseCategoryService {
     }));
 
     await this.prismaService.expenseCategory.createMany({
-
       data: labels,
       skipDuplicates: true,
     });

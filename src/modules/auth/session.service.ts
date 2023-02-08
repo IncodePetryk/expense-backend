@@ -3,12 +3,9 @@ import Prisma from '@prisma/client';
 
 import { PrismaService } from '@Shared/modules/prisma/prisma.service';
 
-
 @Injectable()
 export class SessionService {
-  constructor(
-    private readonly prismaService: PrismaService,
-  ) { }
+  constructor(private readonly prismaService: PrismaService) { }
 
   async create(data: Prisma.Prisma.SessionCreateArgs) {
     return this.prismaService.session.create(data);

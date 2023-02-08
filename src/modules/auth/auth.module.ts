@@ -9,6 +9,7 @@ import { JwtStrategy } from '@Module/auth/jwt.strategy';
 import { TokensService } from '@Src/modules/auth/tokens.service';
 import { UserModule } from '@Src/modules/user/user.module';
 import { ExpenseModule } from '@Module/expense/expense.module';
+import { ExpenseCategoryModule } from '@Module/expense-category/expense-category.module';
 
 @Module({
   providers: [
@@ -19,7 +20,12 @@ import { ExpenseModule } from '@Module/expense/expense.module';
     TokensService,
   ],
   controllers: [AuthController],
-  imports: [UserModule, PassportModule, forwardRef(() => ExpenseModule)],
+  imports: [
+    UserModule,
+    PassportModule,
+    forwardRef(() => ExpenseModule),
+    ExpenseCategoryModule,
+  ],
   exports: [JwtStrategy, AuthService, SessionService, TokensService],
 })
 export class AuthModule {}

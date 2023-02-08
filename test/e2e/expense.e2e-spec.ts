@@ -14,7 +14,6 @@ import { clearDatabase } from '@Test/utils/clear-database';
 import { UserActions } from '@Test/utils/user-actions';
 import { PrismaService } from '@Shared/modules/prisma/prisma.service';
 
-
 describe('AppController (e2e)', () => {
   let app: Application;
   let application: INestApplication;

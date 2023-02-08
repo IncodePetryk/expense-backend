@@ -7,9 +7,9 @@ import {
   UpdateTransactionDto,
 } from '@Module/expense/dto/expense-category.dto';
 import { UserService } from '@Module/user/user.service';
-import { BaseExpenseCategoryService } from '@Module/expense/base-expense-category.service';
-import { TransactionService } from '@Module/expense/transaction.service';
-import { ExpenseCategoryService } from '@Module/expense/expense-category.service';
+import { BaseExpenseCategoryService } from '@Module/expense-category/base-expense-category.service';
+import { TransactionService } from '@Module/transactions/transaction.service';
+import { ExpenseCategoryService } from '@Module/expense-category/expense-category.service';
 import { PrismaService } from '@Shared/modules/prisma/prisma.service';
 
 @Injectable()
@@ -127,12 +127,13 @@ export class ExpenseService {
       },
     });
 
-    const checkCategoryExists = await this.prismaService.expenseCategory.findFirst({
-      where: {
-        userId,
-        label: data.label,
-      },
-    });
+    const checkCategoryExists =
+      await this.prismaService.expenseCategory.findFirst({
+        where: {
+          userId,
+          label: data.label,
+        },
+      });
 
     if (checkCategoryExists) {
       throw new BadRequestException(
