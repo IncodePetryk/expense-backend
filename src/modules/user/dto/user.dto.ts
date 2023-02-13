@@ -33,6 +33,13 @@ export class UserDto implements Omit<Prisma.User, 'password'> {
   readonly role: Prisma.UserRole;
 
   @ApiProperty({
+    description: 'Other expense category ID',
+    type: 'string',
+    example: '5265d8da-f010-47b3-b9a7-aa5bf3b6ee42',
+  })
+  otherExpenseCategoryId: string;
+
+  @ApiProperty({
     description: 'The date the user was created',
     type: 'string',
   })
