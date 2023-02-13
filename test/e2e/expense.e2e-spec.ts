@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config({ path: './.env' });
-
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import Prisma from '@prisma/client';

@@ -11,11 +11,10 @@ import { SessionService } from '@Module/auth/session.service';
 import { TokensService } from '@Module/auth/tokens.service';
 import { ExpenseCategoryService } from '@Module/expense-category/expense-category.service';
 import { UserService } from '@Module/user/user.service';
-import { SetEnvAsNumber } from '@Src/utils/env-variable.util';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  @SetEnvAsNumber('PASSWORD_SALT')
   private readonly passwordSalt: number;
 
   constructor(
@@ -23,7 +22,12 @@ export class AuthService {
     private readonly tokensService: TokensService,
     private readonly sessionService: SessionService,
     private readonly expenseCategoryService: ExpenseCategoryService,
-  ) { }
+    private readonly configService: ConfigService,
+  ) {
+    this.passwordSalt = +this.configService.get('PASSWORD_SALT', {
+      infer: true,
+    });
+  }
 
   async register(data: RegisterDto) {
     const checkEmailExists = await this.userService.findFirst({

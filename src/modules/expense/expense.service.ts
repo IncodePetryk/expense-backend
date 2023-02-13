@@ -20,7 +20,7 @@ export class ExpenseService {
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
     private readonly expenseCategoryService: ExpenseCategoryService,
     private readonly transactionService: TransactionService,
-  ) { }
+  ) {}
 
   async createTransaction(userId: string, data: CreateTransactionDto) {
     const userCandidate = await this.userService.getExisting({

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { SetEnvAsString } from '@Src/utils/env-variable.util';
+import { ConfigService } from '@nestjs/config';
 
 export interface JwtPayload {
   id: string;
@@ -17,19 +17,30 @@ export interface JwtTokensPair {
  */
 @Injectable()
 export class TokensService {
-  @SetEnvAsString('JWT_ACCESS_SECRET')
   private readonly accessTokenSecret: string;
-
-  @SetEnvAsString('JWT_REFRESH_SECRET')
   private readonly refreshTokenSecret: string;
-
-  @SetEnvAsString('JWT_ACCESS_EXPIRES_IN')
   private readonly accessTokenExpiresIn: string;
-
-  @SetEnvAsString('JWT_REFRESH_EXPIRES_IN')
   private readonly refreshTokenExpiresIn: string;
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private configService: ConfigService,
+  ) {
+    this.accessTokenSecret = this.configService.get('JWT_ACCESS_SECRET', {
+      infer: true,
+    });
+    this.refreshTokenSecret = this.configService.get('JWT_ACCESS_SECRET', {
+      infer: true,
+    });
+    this.accessTokenExpiresIn = this.configService.get(
+      'JWT_ACCESS_EXPIRES_IN',
+      { infer: true },
+    );
+    this.refreshTokenExpiresIn = this.configService.get(
+      'JWT_REFRESH_EXPIRES_IN',
+      { infer: true },
+    );
+  }
 
   async generateAccessToken(payload: JwtPayload) {
     return this.jwtService.sign(payload, {

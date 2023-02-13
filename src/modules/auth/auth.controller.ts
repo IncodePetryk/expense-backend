@@ -44,7 +44,7 @@ import { GetCookies } from '@Src/utils/get-cookies.decorator';
 @ApiTags('Authentication / authorization')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ description: 'Register new user' })
   @ApiCreatedResponse({ description: 'User registered successfully' })
@@ -58,7 +58,10 @@ export class AuthController {
   @ApiBadRequestResponse({
     description: 'Bad password or user does not exists',
   })
-  @ApiCreatedResponse({ description: 'User logged-in successfully', type: LogInResponseDto })
+  @ApiCreatedResponse({
+    description: 'User logged-in successfully',
+    type: LogInResponseDto,
+  })
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async logIn(
