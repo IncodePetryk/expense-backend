@@ -20,7 +20,7 @@ export class ExpenseService {
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
     private readonly expenseCategoryService: ExpenseCategoryService,
     private readonly transactionService: TransactionService,
-  ) {}
+  ) { }
 
   async createTransaction(userId: string, data: CreateTransactionDto) {
     const userCandidate = await this.userService.getExisting({
@@ -207,6 +207,10 @@ export class ExpenseService {
         id: userId,
       },
     });
+
+    if (userCandidate.otherExpenseCategoryId === categoryId) {
+      throw new BadRequestException('Impossible to delete "other" category');
+    }
 
     const categoryCandidate = await this.expenseCategoryService.getExisting({
       where: {

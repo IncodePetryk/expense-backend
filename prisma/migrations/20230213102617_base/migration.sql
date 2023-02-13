@@ -9,6 +9,7 @@ CREATE TABLE "Users" (
     "displayName" VARCHAR(40),
     "password" VARCHAR(60) NOT NULL,
     "role" "UserRole" NOT NULL DEFAULT 'user',
+    "otherExpenseCategoryId" VARCHAR(36),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -63,7 +64,13 @@ CREATE TABLE "BaseExpenseCategory" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Users_otherExpenseCategoryId_key" ON "Users"("otherExpenseCategoryId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "BaseExpenseCategory_label_key" ON "BaseExpenseCategory"("label");
+
+-- AddForeignKey
+ALTER TABLE "Users" ADD CONSTRAINT "Users_otherExpenseCategoryId_fkey" FOREIGN KEY ("otherExpenseCategoryId") REFERENCES "ExpenseCategories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Sessions" ADD CONSTRAINT "Sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

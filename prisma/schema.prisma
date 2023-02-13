@@ -19,8 +19,11 @@ model User {
   role        UserRole @default(user)
 
   sessions          Session[]
-  expenseCategories ExpenseCategory[]
+  expenseCategories ExpenseCategory[] @relation(name: "expenseCategory")
   transactions      Transaction[]
+
+  otherExpenseCategory ExpenseCategory? @relation(fields: [otherExpenseCategoryId], references: [id], name: "otherExpenseCategory")
+  otherExpenseCategoryId String? @db.VarChar(36) @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,8 +50,10 @@ model ExpenseCategory {
 
   label String @db.VarChar(30)
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], name: "expenseCategory")
   userId String @db.VarChar(36)
+
+  otherExpenseCategory User? @relation(name: "otherExpenseCategory")
 
   transactions Transaction[]
 

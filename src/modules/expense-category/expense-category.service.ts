@@ -13,7 +13,7 @@ export class ExpenseCategoryService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly baseExpenseCategoryService: BaseExpenseCategoryService,
-  ) {}
+  ) { }
 
   async getExisting(
     data: Prisma.Prisma.ExpenseCategoryFindFirstArgs,
@@ -60,7 +60,7 @@ export class ExpenseCategoryService {
       userId,
     }));
 
-    await this.prismaService.expenseCategory.createMany({
+    return await this.prismaService.expenseCategory.createMany({
       data: labels,
       skipDuplicates: true,
     });

@@ -62,6 +62,20 @@ export class AuthService {
     });
 
     await this.expenseCategoryService.generateBaseCategoriesForUser(newUser.id);
+
+    const otherExpenseCategory = await this.expenseCategoryService.findFirst({
+      where: {
+        userId: newUser.id,
+        label: 'Other',
+      },
+    })
+
+    await this.userService.update({
+      where: { id: newUser.id },
+      data: {
+        otherExpenseCategoryId: otherExpenseCategory.id,
+      },
+    })
   }
 
   async logIn(data: LogInDto, deviceName: string) {
