@@ -67,7 +67,7 @@ export class ExpenseCategoryService {
   }
 
   checkIfCategoryBelongsToUser(
-    user: Prisma.User,
+    user: Pick<Prisma.User, 'id'>,
     expenseCategory: Prisma.ExpenseCategory,
     callback?: () => never,
   ) {

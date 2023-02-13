@@ -23,12 +23,6 @@ export class ExpenseService {
   ) { }
 
   async createTransaction(userId: string, data: CreateTransactionDto) {
-    const userCandidate = await this.userService.getExisting({
-      where: {
-        id: userId,
-      },
-    });
-
     const expenseCategoryCandidate =
       await this.expenseCategoryService.findFirst({
         where: {
@@ -37,7 +31,7 @@ export class ExpenseService {
       });
 
     this.expenseCategoryService.checkIfCategoryBelongsToUser(
-      userCandidate,
+      { id: userId },
       expenseCategoryCandidate,
     );
 
@@ -45,7 +39,7 @@ export class ExpenseService {
       data: {
         ...data,
         date: data.date || new Date(),
-        userId: userCandidate.id,
+        userId,
         expenseCategoryId: expenseCategoryCandidate.id,
       },
     });
@@ -174,12 +168,6 @@ export class ExpenseService {
     categoryId: string,
     data: UpdateExpenseCategoryDto,
   ) {
-    const userCandidate = await this.userService.getExisting({
-      where: {
-        id: userId,
-      },
-    });
-
     const categoryCandidate = await this.expenseCategoryService.getExisting({
       where: {
         id: categoryId,
@@ -187,7 +175,7 @@ export class ExpenseService {
     });
 
     this.expenseCategoryService.checkIfCategoryBelongsToUser(
-      userCandidate,
+      { id: userId },
       categoryCandidate,
     );
 
@@ -217,6 +205,11 @@ export class ExpenseService {
         id: categoryId,
       },
     });
+
+    this.expenseCategoryService.checkIfCategoryBelongsToUser(
+      userCandidate,
+      categoryCandidate,
+    );
 
     // Replace deleted category to 'Other'
     const transactionsCandidates = await this.transactionService.findMany({
@@ -248,11 +241,6 @@ export class ExpenseService {
         },
       });
     }
-
-    this.expenseCategoryService.checkIfCategoryBelongsToUser(
-      userCandidate,
-      categoryCandidate,
-    );
 
     await this.prismaService.expenseCategory.delete({
       where: {
