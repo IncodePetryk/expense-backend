@@ -401,5 +401,17 @@ describe('AppController (e2e)', () => {
 
       expect(body.ballance).toBe(ballance);
     });
+
+    it('try to delete other expense category', async () => {
+      const u = await user.getUser();
+
+      const { body } = await user.request({
+        url: '/expense/category/' + u.body.otherExpenseCategoryId,
+        method: 'delete',
+        expect: 400,
+      });
+
+      expect(body.message).toBe('Impossible to delete "other" category');
+    });
   });
 });
