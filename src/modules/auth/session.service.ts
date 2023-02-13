@@ -5,7 +5,7 @@ import { PrismaService } from '@Shared/modules/prisma/prisma.service';
 
 @Injectable()
 export class SessionService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(data: Prisma.Prisma.SessionCreateArgs) {
     return this.prismaService.session.create(data);
@@ -60,7 +60,7 @@ export class SessionService {
       throw new NotFoundException('Session does not exists');
     }
 
-    return await this.update(data);
+    return this.update(data);
   }
 
   async update(data: Prisma.Prisma.SessionUpdateArgs) {

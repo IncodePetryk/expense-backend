@@ -170,7 +170,7 @@ export class AuthController {
     await this.authService.changePassword(req.user.id, body);
   }
 
-  private async setCookies(
+  private setCookies(
     res: Response,
     { accessToken, refreshToken }: JwtTokensPair,
     responseCode = 200,
